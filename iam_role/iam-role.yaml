@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Test CICD IAM Role for GHA"
+
+Parameters:
+  RepoName:
+    Type: String
+    Default: TestCICD
+
+Resources:
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: TestCICD-GithubRole
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRoleWithWebIdentity
+            Principal:
+              Federated: !Sub "arn:aws:iam::${AWS::AccountId}:oidc-provider/GitHubOidcProvider"
+            Condition:
+              StringLike:
+                token.actions.githubusercontent.com:sub: !Sub repo:${RepoName}:*
+
+  Policy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: test-cicd-gha
+      Roles:
+        - !Ref Role
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              # Admin権限を付与する場合
+              - "iam:*"
+            # LamdbaとDynamoDBとApiGatewayとVpcを操作する権限を付与する場合
+            # - 'lambda:*'
+            # - 'apigateway:*'
+            # - 'dynamodb:*'
+            # - 'vpc:*'
+            Resource: "*"
+
+Outputs:
+  Role:
+    Value: !GetAtt Role.Arn

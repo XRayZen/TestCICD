@@ -1,0 +1,8 @@
+{
+    //複数のCargo.tomlを開発環境での絶対パスで指定する
+    "rust-analyzer.linkedProjects":
+    [
+        "/Users/kojimayoshiyuki/Develop/Project2/TestCICD/lambda/hello/Cargo.toml",
+        "/Users/kojimayoshiyuki/Develop/Project2/TestCICD/lambda/world/Cargo.toml"
+    ],
+}
