@@ -1,8 +1,12 @@
-mod db;
-mod usecase;
+pub mod db;
+pub mod usecase;
+mod tests;
+
 
 use aws_config::meta::region::RegionProviderChain;
+use db::db_repo::{ImplDbRepo, DbRepoTrait};
 use lambda_http::{run, service_fn, Body, Error, Request, RequestExt, Response};
+use usecase::{Usecase, ImplRepos, };
 
 /// This is the main body for the function.
 /// Write your code inside it.
@@ -26,6 +30,14 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     // このデータをprotobufでデコードする
 
     // protobufを使う関数をローカルだけでテストするには難しいから一旦デプロイしてデコードができていたらレスポンスにOKと加えて返してクライアントが確認してテスト完了
+    // この関数はprotobufをデコードしてデータをdynamodbに挿入する
+    //usecaseをインスタンス化してImplDbRepoをDiする
+    let db_repo = ImplDbRepo::new("user".to_string());
+    let implrepos=ImplRepos::new(db_repo);
+    let usecase= Usecase::new(implrepos);
+    // usecase.add(user_id, user_name);
+
+
     // IntoResponse を実装したものを返す。
     // ランタイムによって自動的に正しいレスポンスイベントにシリアライズされます。
     let resp = Response::builder()

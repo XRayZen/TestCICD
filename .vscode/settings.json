@@ -3,6 +3,7 @@
     "rust-analyzer.linkedProjects":
     [
         "/Users/kojimayoshiyuki/Develop/Project2/TestCICD/lambda/hello/Cargo.toml",
-        "/Users/kojimayoshiyuki/Develop/Project2/TestCICD/lambda/world/Cargo.toml"
+        "/Users/kojimayoshiyuki/Develop/Project2/TestCICD/lambda/world/Cargo.toml",
+        "./lambda/hello/Cargo.toml"
     ],
 }

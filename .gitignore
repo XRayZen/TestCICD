@@ -2,3 +2,4 @@ terraform/.terraform
 # Rustフォルダにある/targetフォルダを無視する
 lambda/*/target
 .DS_Store
+.terraform.lock.hcl
