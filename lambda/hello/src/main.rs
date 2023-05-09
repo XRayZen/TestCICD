@@ -1,12 +1,11 @@
 pub mod db;
-pub mod usecase;
 mod tests;
-
+pub mod usecase;
 
 use aws_config::meta::region::RegionProviderChain;
-use db::db_repo::{ImplDbRepo, DbRepoTrait};
+use db::db_repo::{DbRepoTrait, ImplDbRepo};
 use lambda_http::{run, service_fn, Body, Error, Request, RequestExt, Response};
-use usecase::{Usecase, ImplRepos, };
+use usecase::{ImplRepos, Usecase};
 
 /// This is the main body for the function.
 /// Write your code inside it.
@@ -20,23 +19,25 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
         .and_then(|params| params.first("name"))
         .unwrap_or("world");
     let mut message = format!("Hello {who}, this is an AWS Lambda HTTP request");
-    let region= RegionProviderChain::default_provider().or_else("ap-northeast-1");
-    message.push_str(&format!(" from {}!", region.region().await.unwrap().as_ref()));
+    let region = RegionProviderChain::default_provider().or_else("ap-northeast-1");
+    message.push_str(&format!(
+        " from {}!",
+        region.region().await.unwrap().as_ref()
+    ));
     // dynamodbからデータを挿入する
     let config = aws_config::from_env().load().await;
-    let client=aws_sdk_dynamodb::Client::new(&config);
+    let client = aws_sdk_dynamodb::Client::new(&config);
     //eventからバイナリデータを取得する
-    let bytes=event.body().as_ref().to_vec();
+    let bytes = event.body().as_ref().to_vec();
     // このデータをprotobufでデコードする
 
     // protobufを使う関数をローカルだけでテストするには難しいから一旦デプロイしてデコードができていたらレスポンスにOKと加えて返してクライアントが確認してテスト完了
     // この関数はprotobufをデコードしてデータをdynamodbに挿入する
     //usecaseをインスタンス化してImplDbRepoをDiする
     let db_repo = ImplDbRepo::new("user".to_string());
-    let implrepos=ImplRepos::new(db_repo);
-    let usecase= Usecase::new(implrepos);
+    let implrepos = ImplRepos::new(db_repo);
+    let usecase = Usecase::new(&implrepos);
     // usecase.add(user_id, user_name);
-
 
     // IntoResponse を実装したものを返す。
     // ランタイムによって自動的に正しいレスポンスイベントにシリアライズされます。

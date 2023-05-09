@@ -7,13 +7,13 @@ struct TestRepos {
 impl RepoTrait for TestRepos {
     type DbRepo = MockDbRepoTrait;
 
-    fn db_repo(&self) -> Self::DbRepo {
-        self.test_repo
+    fn db_repo(&self) -> &Self::DbRepo {
+        &self.test_repo
     }
 }
 
 impl TestRepos {
-    fn new(test_repo: MockDbRepoTrait) -> Self {
+    pub fn new(test_repo: MockDbRepoTrait) -> Self {
         Self { test_repo }
     }
 }
