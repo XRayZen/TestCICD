@@ -1,6 +1,7 @@
 pub mod db;
 mod tests;
 pub mod usecase;
+pub mod proto;
 
 use aws_config::meta::region::RegionProviderChain;
 use db::db_repo::{DbRepoTrait, ImplDbRepo};
