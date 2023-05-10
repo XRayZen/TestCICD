@@ -1,4 +1,4 @@
-use crate::{db::db_repo::MockDbRepoTrait, usecase::RepoTrait};
+use crate::{db::db_repo::MockDbRepoTrait, repo_trait::RepoTrait, };
 
 struct TestRepos {
     pub test_repo: MockDbRepoTrait,

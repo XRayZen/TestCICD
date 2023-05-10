@@ -17,8 +17,8 @@ jobs:
     strategy:
       matrix:
         function:
-          - function1
-          - function2
+          - hello
+          - world
           # 他のLambda関数名を追加
 
     steps:

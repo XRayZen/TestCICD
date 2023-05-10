@@ -1,3 +1,4 @@
 // @generated
 
-pub mod hello;
+pub mod hello_req;
+pub mod hello_res;

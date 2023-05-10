@@ -1,33 +1,7 @@
-use crate::db::{
+use crate::{db::{
     db_model::DbModel,
-    db_repo::{DbRepoTrait, ImplDbRepo},
-};
-
-// リポジトリをまとめるトレイト
-pub trait RepoTrait {
-    type DbRepo: DbRepoTrait;
-
-    fn db_repo(&self) -> &Self::DbRepo;
-}
-// 依存するリポジトリをまとめるDI構造体
-//リポジトリtraitの具体型を決定する、静的なDI (Dependency Injection) をする
-pub struct ImplRepos {
-    db_repo: ImplDbRepo,
-}
-
-impl RepoTrait for ImplRepos {
-    type DbRepo = ImplDbRepo;
-
-    fn db_repo(&self) -> &Self::DbRepo {
-        &self.db_repo
-    }
-}
-
-impl ImplRepos {
-    pub fn new(db_repo: ImplDbRepo /*More Impl Repo...*/) -> Self {
-        Self { db_repo }
-    }
-}
+    db_repo::{DbRepoTrait,},
+}, repo_trait::RepoTrait};
 
 pub struct Usecase<'a, T: RepoTrait> {
     db_repo: &'a T::DbRepo,
@@ -57,5 +31,12 @@ impl<'a,T: RepoTrait> Usecase<'a,T> {
     ) -> Result<String, Box<dyn std::error::Error + Send + Sync + 'static>> {
         let db_model = self.db_repo.get_item(user_id.to_string()).await?;
         Ok(format!("get {user_id} {}", db_model.user_name))
+    }
+    pub async fn find(
+        &self,
+        user_id: &str,
+    ) -> Result<String, Box<dyn std::error::Error + Send + Sync + 'static>> {
+        let db_model = self.db_repo.query_item(user_id.to_string()).await?;
+        Ok(format!("find {user_id} {}", db_model.user_name))
     }
 }
