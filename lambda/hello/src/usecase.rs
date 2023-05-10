@@ -1,7 +1,7 @@
 use crate::{db::{
     db_model::DbModel,
-    db_repo::{DbRepoTrait,},
-}, repo_trait::RepoTrait};
+    db_repo::{},
+}, repo_trait::RepoTrait, app::repo_trait::DbRepoTrait};
 
 pub struct Usecase<'a, T: RepoTrait> {
     db_repo: &'a T::DbRepo,
@@ -13,7 +13,7 @@ impl<'a,T: RepoTrait> Usecase<'a,T> {
             db_repo: repo.db_repo(),
         }
     }
-    pub async fn add(
+    pub async fn add_user(
         &self,
         user_id: &str,
         user_name: &str,

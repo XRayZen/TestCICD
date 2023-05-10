@@ -1,4 +1,4 @@
-use crate::db::db_repo::{DbRepoTrait, ImplDbRepo};
+use crate::{db::db_repo::{ImplDbRepo}, app::repo_trait::DbRepoTrait};
 
 
 
@@ -8,13 +8,14 @@ pub trait RepoTrait {
 
     fn db_repo(&self) -> &Self::DbRepo;
 }
+
 // 依存するリポジトリをまとめるDI構造体
 //リポジトリtraitの具体型を決定する、静的なDI (Dependency Injection) をする
-pub struct ImplRepos {
+pub struct ImplRepoTrait {
     db_repo: ImplDbRepo,
 }
 
-impl RepoTrait for ImplRepos {
+impl RepoTrait for ImplRepoTrait {
     type DbRepo = ImplDbRepo;
 
     fn db_repo(&self) -> &Self::DbRepo {
@@ -22,7 +23,7 @@ impl RepoTrait for ImplRepos {
     }
 }
 
-impl ImplRepos {
+impl ImplRepoTrait {
     pub fn new(db_repo: ImplDbRepo /*More Impl Repo...*/) -> Self {
         Self { db_repo }
     }

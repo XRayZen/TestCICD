@@ -1,15 +1,15 @@
+pub mod app;
 pub mod db;
 pub mod gen_proto;
+pub mod proto;
 pub mod repo_trait;
 mod tests;
 pub mod usecase;
 
-use db::db_repo::{DbRepoTrait, ImplDbRepo};
-use gen_proto::hello_req::HelloRequest;
-use lambda_http::{run, service_fn, Body, Error, Request,  Response};
-use protobuf::{Message, EnumOrUnknown};
-use repo_trait::ImplRepos;
-use usecase::Usecase;
+use app::repo_trait::DbRepoTrait;
+use db::db_repo::ImplDbRepo;
+use lambda_http::{run, service_fn, Body, Error, Request, Response};
+use repo_trait::ImplRepoTrait;
 
 /// This is the main body for the function.
 /// Write your code inside it.
@@ -21,56 +21,23 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     let config = aws_config::from_env().load().await;
     //eventからバイナリデータを取得する
     let bytes = event.body().as_ref();
-    // このデータをprotobufでデコードする
-    let request: HelloRequest = match protobuf::Message::parse_from_bytes(bytes) {
-        Ok(request) => request,
-        Err(e) => {
-            eprintln!("Failed to parse request: {:?}", e);
+    // protobufを使う関数をローカルだけでテストするには難しいから一旦デプロイしてデコードができていたらレスポンスにOKと加えて返してクライアントが確認してテスト完了
+    // この関数はprotobufをデコードしてデータをdynamodbに挿入する
+    //usecaseをインスタンス化してImplDbRepoをDiする
+    let db_repo = ImplDbRepo::new("user".to_string());
+    let implrepos = ImplRepoTrait::new(db_repo);
+    // IntoResponse を実装したものを返す。
+    // ランタイムによって自動的に正しいレスポンスイベントにシリアライズされます
+    match proto::proto_process(&bytes, &implrepos).await {
+        Ok(txt) => return Ok(txt),
+        Err(err) => {
+            eprintln!("Failed to parse request: {:?}", err);
             return Ok(Response::builder()
                 .status(400)
                 .body(Body::from("Bad request"))
                 .unwrap());
         }
-    };
-    // protobufを使う関数をローカルだけでテストするには難しいから一旦デプロイしてデコードができていたらレスポンスにOKと加えて返してクライアントが確認してテスト完了
-    // この関数はprotobufをデコードしてデータをdynamodbに挿入する
-    //usecaseをインスタンス化してImplDbRepoをDiする
-    let db_repo = ImplDbRepo::new("user".to_string());
-    let implrepos = ImplRepos::new(db_repo);
-    let usecase = Usecase::new(&implrepos);
-    match request.api_req_type.enum_value() {
-        Ok(i) => match i {
-            gen_proto::hello_req::ApiReqType::API_REQ_TYPE_UNSPECIFIED => todo!(),
-            gen_proto::hello_req::ApiReqType::API_REQ_TYPE_GET_USER => {
-                let mut helloRes = gen_proto::hello_res::HelloResponse::new();
-                let mut get_user_response = gen_proto::hello_res::GetUserResponse::new();
-                get_user_response.message = usecase.get(&request.get_user_name_request().user_id).await?;
-                helloRes.set_get_user_response(get_user_response);
-                helloRes.api_res_type = EnumOrUnknown::new(gen_proto::hello_res::ApiResType::API_RES_TYPE_SUCCESS);
-                let response_data= vec![];
-                match helloRes.write_to_bytes() {
-                    Ok(data) => {
-                        response_data = data;
-                    },
-                    Err(err) => {
-                        println!("err: {:?}", err);
-                    }  
-                }
-                return Ok(Response::builder()
-                    .status(200)
-                    .header("content-type", "application/x-protobuf")
-                    .body(response_data.into())
-                    .map_err(Box::new)?);
-            },
-            gen_proto::hello_req::ApiReqType::API_REQ_TYPE_ADD_USER => todo!(),
-        },
-        Err(err) => todo!(),
     }
-    //  usecase.add(user_id, user_name);
-
-    // IntoResponse を実装したものを返す。
-    // ランタイムによって自動的に正しいレスポンスイベントにシリアライズされます。
-    Ok(resp)
 }
 
 #[tokio::main]
