@@ -1,6 +1,5 @@
 use crate::{db::{
     db_model::DbModel,
-    db_repo::{},
 }, repo_trait::RepoTrait, app::repo_trait::DbRepoTrait};
 
 pub struct Usecase<'a, T: RepoTrait> {

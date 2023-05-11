@@ -21,6 +21,10 @@ resource "aws_lambda_function" "lambda_function_hello" {
   # ファイル名とエントリーポイントを指定する
   handler       = "hello.main"
   runtime       = "provided.al2"
+  # アーキテクチャをARMにしておく
+  # ARMの方がコストパフォーマンスが良い
+  # https://aws.amazon.com/jp/blogs/aws/new-for-aws-lambda-container-image-support/
+  architectures = "arm64"
 
   image_uri = "${module.ecr-lambda.repository_url}:hello"
 

@@ -5,7 +5,6 @@ use crate::db::db_model::DbModel;
 #[mockall::automock]
 pub trait DbRepoTrait {
     fn new(collection_name: String) -> Self;
-    async fn connect_aws(&self) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>>;
     async fn put_item(
         &self,
         item: &DbModel,
