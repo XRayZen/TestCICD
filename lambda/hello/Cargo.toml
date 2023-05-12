@@ -37,3 +37,7 @@ protobuf-codegen = "3.2.0"
 # clippyを使う
 [dev-dependencies]
 clippy = "0.0.302"
+
+[[bin]]
+name = "hello"
+path = "src/main.rs"
