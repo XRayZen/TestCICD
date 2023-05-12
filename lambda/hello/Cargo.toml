@@ -41,3 +41,7 @@ clippy = "0.0.302"
 [[bin]]
 name = "hello"
 path = "src/main.rs"
+
+# Updating crates.io.indexを高速化
+[registries.crates-io]
+protocol = "sparse"
