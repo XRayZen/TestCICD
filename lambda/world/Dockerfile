@@ -1,17 +1,43 @@
-FROM rust:1.69.0
-WORKDIR /app
-RUN curl https://lambda.rustup.rs -sSf | sh -s -- -y && \
-    . $HOME/.cargo/env && \
-    cargo install cargo-aws-lambda && \
-    apt-get update && \
-    apt-get install -y zip && \
-    rm -rf /var/lib/apt/lists/*
-COPY . .
-RUN cargo build --release --bin world
-RUN cargo test --bin world --no-run
-RUN mkdir -p /build && \
-    cd target/release && \
-    cp world /build/ && \
-    cd /build && \
-    zip world.zip world
-CMD ["bash"]
+# Dockerfile for building Rust AWS Lambda function using cargo-aws-lambda
+FROM ghcr.io/cargo-lambda/cargo-lambda:latest as builder
+
+# Set the working directory
+WORKDIR /usr/src/world
+
+# Copy the entire project source to the container
+COPY . ./
+
+# 依存しているパッケージをインストール
+RUN apt-get update
+RUN apt-get install -y protobuf-compiler
+
+# ツールチェインをインストール 
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
+RUN rustup update
+
+# Build the Lambda function
+RUN cargo +nightly lambda build -Z sparse-registry --release --bin world
+
+# copy binary to /usr/comp/
+RUN mkdir -p /usr/comp/
+# COPY /usr/src/world/target/lambda/world /usr/comp/
+RUN cp -r /usr/src/world/target/lambda/world /usr/comp/
+# remove target/release
+RUN rm -rf /usr/src/world/target/release
+# 出来なかったらワーキングディレクトリすべて削除に変更する
+
+# 第二ステージ
+# Use the official Amazon Linux image as the base image
+FROM amazonlinux:2
+# サンプルではpublic.ecr.aws/lambda/provided:al2をつかっている
+# 以下サンプルのコード 上手くいかなかったら置き換える
+# FROM public.ecr.aws/lambda/provided:al2
+# COPY --from=build /tmp/target/x86_64-unknown-linux-musl/release/api  ${LAMBDA_RUNTIME_DIR}/bootstrap
+# CMD [ "lambda-handler" ]
+
+# Copy the Lambda function binary to the container
+# COPY --from=builder /usr/src/world/target/lambda/world /var/task/
+COPY --from=builder /usr/comp/world /var/task/
+
+# Set the CMD to the Lambda function handler
+CMD [ "world" ]
