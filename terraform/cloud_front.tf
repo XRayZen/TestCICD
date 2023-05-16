@@ -1,19 +1,16 @@
 
 resource "aws_cloudfront_distribution" "cf_dist" {
-  enabled         = true
+  enabled    = true
   web_acl_id = aws_wafv2_web_acl.waf.id
   origin {
     domain_name = replace(aws_api_gateway_deployment.api_gw_deploy.invoke_url, "/^https?://([^/]*).*/", "$1")
     origin_id   = "apigw_root"
-    # ここはまず、キャッシュパス動作でパスパターンを定義して動作するか確認する
-    # The stage name is the same as the path patternを適用
-    # origin_path = "/${var.project_stage}"
 
     custom_origin_config {
       http_port              = 80
       https_port             = 443
       origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1","TLSv1.1"]
+      origin_ssl_protocols   = ["TLSv1", "TLSv1.1"]
     }
   }
 
@@ -29,11 +26,12 @@ resource "aws_cloudfront_distribution" "cf_dist" {
         forward = "all"
       }
     }
-
+    # 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
     default_ttl            = 0
     max_ttl                = 0
+
   }
 
   ordered_cache_behavior {
@@ -49,7 +47,8 @@ resource "aws_cloudfront_distribution" "cf_dist" {
         forward = "all"
       }
     }
-
+    # これを指定するとビューワーからのリクエストをHTTPSにリダイレクトする
+    # https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/using-https-viewers-to-cloudfront.html
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
     default_ttl            = 0
@@ -61,7 +60,7 @@ resource "aws_cloudfront_distribution" "cf_dist" {
       restriction_type = "none"
     }
   }
-
+  # 通信経路に使う証明書を指定する
   viewer_certificate {
     # 今はとりあえずデフォルトの証明書を使う
     cloudfront_default_certificate = true
@@ -69,6 +68,15 @@ resource "aws_cloudfront_distribution" "cf_dist" {
 
   tags = {
     Name = "api_gw_cloudfront"
+  }
+
+  price_class = "PriceClass_All" # すべての価格クラスのエッジロケーションを使用する
+
+  # アクセスログをS3に保存する
+  logging_config {
+    bucket          = aws_s3_bucket.cloudfront_logging.bucket_domain_name
+    include_cookies = false
+    prefix          = "cloudfront/"
   }
 }
 
