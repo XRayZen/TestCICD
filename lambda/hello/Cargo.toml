@@ -2,7 +2,7 @@
 name = "hello"
 version = "0.1.0"
 edition = "2021"
-
+build = "build.rs"
 # Starting in Rust 1.62 you can use `cargo add` to add dependencies 
 # to your project.
 #
@@ -23,11 +23,25 @@ lambda_runtime = "0.8.0"
 tokio = { version = "1", features = ["full"] }
 tracing = { version = "0.1", features = ["log"] }
 tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt"] }
+anyhow = "1.0.71"
 typed-builder = "0.14.0"
 async-trait = "0.1.51"
 mockall = {version = "0.11.4"}
+bytes = "1.4.0"
+prost = "0.11.9"
+protobuf = "3.2.0"
 
-
+[build_dependencies]
+prost-build = { version = "0.11.9"}
+protobuf-codegen = "3.2.0"
 # clippyを使う
 [dev-dependencies]
 clippy = "0.0.302"
+
+[[bin]]
+name = "hello"
+path = "src/main.rs"
+
+# Updating crates.io.indexを高速化
+[registries.crates-io]
+protocol = "sparse"

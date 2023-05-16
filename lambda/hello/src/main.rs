@@ -1,41 +1,41 @@
-mod db;
-mod usecase;
+pub mod app;
+pub mod db;
+pub mod gen_proto;
+pub mod proto;
+pub mod repo_trait;
+mod tests;
+pub mod usecase;
 
-use aws_config::meta::region::RegionProviderChain;
-use lambda_http::{run, service_fn, Body, Error, Request, RequestExt, Response};
+use app::repo_trait::DbRepoTrait;
+use db::impl_db_repo::ImplDbRepo;
+use lambda_http::{run, service_fn, Body, Error, Request, Response};
+use repo_trait::ImplRepoTrait;
 
 /// This is the main body for the function.
 /// Write your code inside it.
 /// There are some code example in the following URLs:
 /// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/examples
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
-    // let data = String::from_utf8(&).unwrap();
     // Extract some useful information from the request
-    let who = event
-        .query_string_parameters_ref()
-        .and_then(|params| params.first("name"))
-        .unwrap_or("world");
-    let mut message = format!("Hello {who}, this is an AWS Lambda HTTP request");
-    let region= RegionProviderChain::default_provider().or_else("ap-northeast-1");
-    message.push_str(&format!(" from {}!", region.region().await.unwrap().as_ref()));
-    // dynamodbからデータを挿入する
-    let config = aws_config::from_env().load().await;
-    let client=aws_sdk_dynamodb::Client::new(&config);
     //eventからバイナリデータを取得する
-    let bytes=event.body().as_ref().to_vec();
-    // このデータをprotobufでデコードする
-
+    let bytes = event.body().as_ref();
     // protobufを使う関数をローカルだけでテストするには難しいから一旦デプロイしてデコードができていたらレスポンスにOKと加えて返してクライアントが確認してテスト完了
+    // この関数はprotobufをデコードしてデータをdynamodbに挿入する
+    //usecaseをインスタンス化してImplDbRepoをDiする
+    let db_repo = ImplDbRepo::new("user".to_string());
+    let implrepos = ImplRepoTrait::new(db_repo);
     // IntoResponse を実装したものを返す。
-    // ランタイムによって自動的に正しいレスポンスイベントにシリアライズされます。
-    let resp = Response::builder()
-        .status(200)
-        // プロトバフの場合、content-typeはapplication/x-protobufになる
-        .header("content-type", "application/x-protobuf")
-        // ボディにprotobufにシリアライズしたデータを入れる
-        .body(message.into())
-        .map_err(Box::new)?;
-    Ok(resp)
+    // ランタイムによって自動的に正しいレスポンスイベントにシリアライズされます
+    match proto::proto_process(&bytes, &implrepos).await {
+        Ok(txt) => return Ok(txt),
+        Err(err) => {
+            eprintln!("Failed to parse request: {:?}", err);
+            return Ok(Response::builder()
+                .status(400)
+                .body(Body::from("Bad request"))
+                .unwrap());
+        }
+    }
 }
 
 #[tokio::main]

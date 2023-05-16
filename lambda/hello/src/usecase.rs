@@ -1,27 +1,41 @@
-use crate::db::{db_model::DbModel, db_repo::DbRepoTrait};
+use crate::{db::{
+    db_model::DbModel,
+}, repo_trait::RepoTrait, app::repo_trait::DbRepoTrait};
 
-// リポジトリをまとめるトレイト
-pub trait RepoTrait {
-    type DbRepo: DbRepoTrait;
-
-    fn db_repo(&self) -> Self::DbRepo;
+pub struct Usecase<'a, T: RepoTrait> {
+    db_repo: &'a T::DbRepo,
 }
 
-pub trait UsecaseTrait {
-    fn open() -> String;
-}
-
-pub struct Usecase<T: RepoTrait> {
-    db_repo: T::DbRepo,
-}
-
-impl<T: RepoTrait> Usecase<T> {
-    pub fn new(repo: T) -> Self {
+impl<'a,T: RepoTrait> Usecase<'a,T> {
+    pub fn new(repo:&'a T) -> Self {
         Self {
             db_repo: repo.db_repo(),
         }
     }
-    pub fn open(&self) -> String {
-       todo!()
+    pub async fn add_user(
+        &self,
+        user_id: &str,
+        user_name: &str,
+    ) -> Result<String, Box<dyn std::error::Error + Send + Sync + 'static>> {
+        let db_model = DbModel::builder()
+            .user_id(user_id.to_string())
+            .user_name(user_name.to_string())
+            .build();
+        self.db_repo.put_item(&db_model).await?;
+        Ok(format!("add {} {}", user_id, user_name))
+    }
+    pub async fn get(
+        &self,
+        user_id: &str,
+    ) -> Result<String, Box<dyn std::error::Error + Send + Sync + 'static>> {
+        let db_model = self.db_repo.get_item(user_id.to_string()).await?;
+        Ok(format!("get {user_id} {}", db_model.user_name))
+    }
+    pub async fn find(
+        &self,
+        user_id: &str,
+    ) -> Result<String, Box<dyn std::error::Error + Send + Sync + 'static>> {
+        let db_model = self.db_repo.query_item(user_id.to_string()).await?;
+        Ok(format!("find {user_id} {}", db_model.user_name))
     }
 }

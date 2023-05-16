@@ -1,40 +1,18 @@
-use async_trait::async_trait;
-use aws_config::SdkConfig;
-use aws_sdk_dynamodb::types::AttributeValue;
+use crate::app::repo_trait::DbRepoTrait;
 
 use super::db_model::DbModel;
-#[async_trait]
-pub trait DbRepoTrait {
-    fn new(aws_config: &SdkConfig, collection_name: String) -> Self;
-    async fn put_item(
-        &self,
-        item: &DbModel,
-    ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>>;
-    async fn query_item(
-        &self,
-        user_id: String,
-    ) -> Result<DbModel, Box<dyn std::error::Error + Send + Sync + 'static>>;
-    async fn delete_item(
-        &self,
-        user_id: String,
-    ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>>;
-    async fn get_item(
-        &self,
-        user_id: String,
-    ) -> Result<DbModel, Box<dyn std::error::Error + Send + Sync + 'static>>;
-}
+use async_trait::async_trait;
+use aws_sdk_dynamodb::types::AttributeValue;
 
-pub struct DbRepo {
-    db_client: aws_sdk_dynamodb::Client,
+#[derive(Clone, Debug)]
+pub struct ImplDbRepo {
     table_name: String,
 }
 
 #[async_trait]
-impl DbRepoTrait for DbRepo {
-    fn new(aws_config: &SdkConfig, collection_name: String) -> Self {
-        let db_client = aws_sdk_dynamodb::Client::new(aws_config);
+impl DbRepoTrait for ImplDbRepo {
+    fn new(collection_name: String) -> Self {
         Self {
-            db_client,
             table_name: collection_name,
         }
     }
@@ -43,8 +21,9 @@ impl DbRepoTrait for DbRepo {
         &self,
         item: &DbModel,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
-        let _res = self
-            .db_client
+        let config = aws_config::from_env().load().await;
+        let db_client = aws_sdk_dynamodb::Client::new(&config);
+        let _res = db_client
             .put_item()
             .table_name(&self.table_name)
             .item("user_id", AttributeValue::S(item.user_id.clone()))
@@ -53,7 +32,6 @@ impl DbRepoTrait for DbRepo {
             .item("user_address", AttributeValue::S(item.user_address.clone()))
             .send()
             .await?;
-
         Ok(())
     }
 
@@ -61,8 +39,9 @@ impl DbRepoTrait for DbRepo {
         &self,
         user_id: String,
     ) -> Result<DbModel, Box<dyn std::error::Error + Send + Sync + 'static>> {
-        let res = self
-            .db_client
+        let config = aws_config::from_env().load().await;
+        let db_client = aws_sdk_dynamodb::Client::new(&config);
+        let res = db_client
             .query()
             .table_name(&self.table_name)
             .key_condition_expression("user_id = :user_id")
@@ -104,8 +83,9 @@ impl DbRepoTrait for DbRepo {
         &self,
         user_id: String,
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
-        let _res = self
-            .db_client
+        let config = aws_config::from_env().load().await;
+        let db_client = aws_sdk_dynamodb::Client::new(&config);
+        let _res = db_client
             .delete_item()
             .table_name(&self.table_name)
             .key("user_id", AttributeValue::S(user_id.clone()))
@@ -118,8 +98,9 @@ impl DbRepoTrait for DbRepo {
         &self,
         user_id: String,
     ) -> Result<DbModel, Box<dyn std::error::Error + Send + Sync + 'static>> {
-        let res = self
-            .db_client
+        let config = aws_config::from_env().load().await;
+        let db_client = aws_sdk_dynamodb::Client::new(&config);
+        let res = db_client
             .get_item()
             .table_name(&self.table_name)
             .key("user_id", AttributeValue::S(user_id.clone()))
@@ -136,8 +117,7 @@ impl DbRepoTrait for DbRepo {
             .unwrap_or_default();
         let user_age: u32 = item
             .get("user_age")
-            .map(|v| v.as_n().unwrap_or(&"".to_string()).parse::<u32>())
-            .transpose()?
+            .map(|v| v.as_n().unwrap_or(&"".to_string()).parse().unwrap())
             .unwrap_or_default();
         let db_model = DbModel::builder()
             .user_id(user_id)

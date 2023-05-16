@@ -13,7 +13,7 @@ resource "aws_api_gateway_method" "api_gw_method_hello" {
   resource_id = aws_api_gateway_resource.api_gw_resource_hello.id
   # (必須) API メソッドの HTTP メソッドです。
   http_method = "POST"
-  # 今はまだ認証は設けない　prodステージで実装する
+  # 今はまだ認証は設けない prodステージで実装する
   authorization = "NONE"
 }
 
@@ -64,7 +64,7 @@ resource "aws_api_gateway_integration_response" "api_gw_integration_response_hel
   http_method = aws_api_gateway_method.api_gw_method_hello.http_method
   # (必須) API 統合レスポンスのステータスコードです。
   status_code = aws_api_gateway_method_response.api_gw_method_response_hello.status_code
-  
+
   # protobufの場合では必要
   # バイナリデータをパススルーするように設定
   response_templates = {

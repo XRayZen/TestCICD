@@ -3,12 +3,12 @@ name: CI/CD
 on:
   push:
     branches:
-      - goto
+      - main
 
 env:
   AWS_REGION: ap-northeast-1
   TF_VAR_environment: production
-  AWS_Role_ARN: secret.IMA_ROLE_ARN
+  AWS_Role_ARN: secret.IAM_ROLE_ARN
   REPO_ECR_NAME: TestCICD-ECR-Repo
 
 jobs:
@@ -17,8 +17,8 @@ jobs:
     strategy:
       matrix:
         function:
-          - function1
-          - function2
+          - hello
+          - world
           # 他のLambda関数名を追加
 
     steps:
