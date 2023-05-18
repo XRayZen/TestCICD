@@ -60,10 +60,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Configure AWS credentials
+    - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-assume: ${{ env.AWS_Role_ARN }}
+        role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Set up Terraform
