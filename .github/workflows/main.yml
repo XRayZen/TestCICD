@@ -6,10 +6,10 @@ on:
       - main
 
 env:
-  AWS_REGION: ap-northeast-1
-  TF_VAR_environment: production
+  AWS_REGION: us-east-1
+  TF_VAR_environment: prod
   AWS_Role_ARN: secret.IAM_ROLE_ARN
-  REPO_ECR_NAME: TestCICD-ECR-Repo
+  REPO_ECR_NAME: test-cicd-repo
 
 jobs:
   build_and_push:
@@ -27,6 +27,12 @@ jobs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
+
+    - name: AWS auth
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-region: ${{ env.AWS_REGION }}
+        role-to-assume: ${{ env.AWS_Role_ARN }}
 
     - name: Login to Amazon ECR
       id: login-ecr

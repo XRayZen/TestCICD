@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "cloudfront_logging_bucket" {
 ###############################################
 resource "aws_s3_bucket" "cloudfront_logging" {
   bucket        = "cloudfront-access-log.mini-schna.com"
-  policy        = data.aws_iam_policy_document.cloudfront_logging_bucket.json
+  # policy        = data.aws_iam_policy_document.cloudfront_logging_bucket.json
   force_destroy = false
 }
 
@@ -83,4 +83,44 @@ resource "aws_s3_bucket_versioning" "log_bucket_versioning" {
 resource "aws_s3_bucket_request_payment_configuration" "log_bucket_request_payment" {
   bucket = aws_s3_bucket.cloudfront_logging.id
   payer  = "BucketOwner"
+}
+# CloudFrontのアクセスログ格納用バケットポリシー
+resource "aws_s3_bucket_policy" "log_bucket_policy" {
+  bucket = aws_s3_bucket.cloudfront_logging.id
+  # "s3:ListBucket" "s3:PutObject"  "s3:GetObject"
+  # "Service": "cloudfront.amazonaws.com"
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowCloudFrontToPutLogs",
+      "Effect": "Allow",
+      "Principal": {
+        "*": "*"
+      },
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::cloudfront-access-log.mini-schna.com/*"
+    },
+    {
+      "Sid": "AllowCloudFrontToGetLogs",
+      "Effect": "Allow",
+      "Principal": {
+        "*": "*"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::cloudfront-access-log.mini-schna.com/*"
+    },
+    {
+      "Sid": "AllowCloudFrontToDescribeBucket",
+      "Effect": "Allow",
+      "Principal": {
+        "*": "*"
+      },
+      "Action": "s3:ListBucket",
+     "Resource": "arn:aws:s3:::cloudfront-access-log.mini-schna.com"
+    }
+  ]
+}
+POLICY
 }
