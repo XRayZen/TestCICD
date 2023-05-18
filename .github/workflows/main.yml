@@ -52,6 +52,9 @@ jobs:
   deploy_infrastructure:
     needs: build_and_push
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
     - name: Checkout code

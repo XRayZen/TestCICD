@@ -48,11 +48,14 @@ Resources:
             Action:
               # Admin権限を付与する場合
               - "iam:*"
-            # LamdbaとDynamoDBとApiGatewayとVpcを操作する権限を付与する場合
-            # - 'lambda:*'
-            # - 'apigateway:*'
-            # - 'dynamodb:*'
-            # - 'vpc:*'
+            # LamdbaとDynamoDBとApiGatewayとVpcとS3とBudgetとECRを操作する権限を付与する場合
+              - 'lambda:*'
+              - 'apigateway:*'
+              - 'dynamodb:*'
+              - 'vpc:*'
+              - 's3:*'
+              - 'budgets:*'
+              - 'ecr:*'
             Resource: "*"
 
   GithubOidc:
