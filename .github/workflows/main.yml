@@ -70,10 +70,10 @@ jobs:
       uses: hashicorp/setup-terraform@v1
 
     - name: Initialize Terraform
-      run: terraform init -chdir=terraform/${{ env.TF_VAR_environment }}
+      run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} init 
 
     - name: Validate Terraform
-      run: terraform validate -chdir=terraform/${{ env.TF_VAR_environment }}
+      run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} validate
 
     - name: Plan Terraform
       run: terraform plan -out=tfplan -chdir=terraform/${{ env.TF_VAR_environment }}
