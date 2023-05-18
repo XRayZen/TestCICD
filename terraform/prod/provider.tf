@@ -12,8 +12,5 @@ terraform {
 provider "aws" {
   alias = "virginia"
   # CloudFrontを使う場合はAWSリソースのリージョンをus-east-1にする必要がある
-  region  = "us-east-1"
-  # profile = "terraform-user"
-  # profile = "terraform-user"
-  # region  = "ap-northeast-1"
+  region  = var.aws_region
 }

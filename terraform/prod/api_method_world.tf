@@ -45,6 +45,10 @@ resource "aws_api_gateway_method_response" "api_gw_method_response_world" {
   response_models = {
     "application/json" = "Empty"
   }
+
+  depends_on = [
+    aws_api_gateway_integration.api_gw_world_integration,
+  ]
 }
 
 resource "aws_api_gateway_integration_response" "api_gw_integration_response_world" {
@@ -56,6 +60,10 @@ resource "aws_api_gateway_integration_response" "api_gw_integration_response_wor
   response_templates = {
     "application/json" = "{ \"body\": $input.json('$') }"
   }
+
+  depends_on = [ 
+    aws_api_gateway_integration.api_gw_world_integration,
+   ]
 }
 
 

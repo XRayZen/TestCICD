@@ -8,12 +8,6 @@ resource "aws_lambda_permission" "apigw_lambda_permission_hello" {
   source_arn    = "${aws_api_gateway_rest_api.api_gw_rest_api.execution_arn}/*/*/*"
 }
 
-data "aws_ecr_image" "hello-ecr-image" {
-  repository_name = "${var.project_name}-repo"
-  image_tag       = "hello"
-  depends_on      = [module.ecr-lambda]
-}
-
 resource "aws_lambda_function" "lambda_function_hello" {
   function_name = "hello"
   description   = "hello function"
@@ -22,13 +16,14 @@ resource "aws_lambda_function" "lambda_function_hello" {
   # ファイル名とエントリーポイントを指定する
   handler = "hello.main"
   runtime = "provided.al2"
-
-  image_uri = "${module.ecr-lambda.repository_url}:hello"
-
   # メモリサイズの大きさに応じて割り当てられるCPUリソースが変わる
   # 最小値は128MB、最大値は3008MB
   memory_size = 128
   timeout     = 5
+
+  package_type = "Image"
+  image_uri = "${module.ecr-lambda.repository_url}:hello"
+
   environment {
     variables = {
       TABLE_NAME = aws_dynamodb_table.prime_ministers_table.name
@@ -47,12 +42,6 @@ resource "aws_lambda_function" "lambda_function_hello" {
   ]
 }
 
-data "aws_ecr_image" "world-ecr-image" {
-  repository_name = "${var.project_name}-repo"
-  image_tag       = "world"
-  depends_on      = [module.ecr-lambda]
-}
-
 resource "aws_lambda_function" "lambda_function_world" {
   function_name = "world"
   description   = "world function"
@@ -61,12 +50,13 @@ resource "aws_lambda_function" "lambda_function_world" {
   # ファイル名とエントリーポイントを指定する
   handler = "world.main"
   runtime = "provided.al2"
-
-  image_uri = "${module.ecr-lambda.repository_url}:world"
   # メモリサイズの大きさに応じて割り当てられるCPUリソースが変わる
   # 最小値は128MB、最大値は3008MB
   memory_size = 128
   timeout     = 5
+
+  package_type = "Image"
+  image_uri = "${module.ecr-lambda.repository_url}:world"
 
   environment {
     variables = {

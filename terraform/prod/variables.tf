@@ -11,7 +11,8 @@ variable "aws_region" {
 
 variable "project_name" {
   description = "Project Name"
-  default     = "TestCICD"
+  # ECRのリポジトリ名に使われるので、小文字のみを使う
+  default     = "test-cicd"
 }
 
 variable "project_stage" {
@@ -26,7 +27,7 @@ variable "project_tag" {
 
 variable "project_description" {
   description = "Project Description"
-  default     = "Test CICD ApiGateWay+Lamdba+Rust+Docker+ECR+Terraform Project"
+  default     = "Test CICD CloudFront+ApiGateWay+Lamdba+Rust+Docker+ECR+S3 Terraform Project"
 }
 
 variable "project_owner" {
@@ -35,7 +36,12 @@ variable "project_owner" {
 }
 # 作成するサブネットに合わせて、アベイラビリティゾーンリストを定義
 variable "availability_zones" {
-  type    = list(string)
+  type = list(string)
   # us-east-1a, us-east-1b, us-east-1c
   default = ["us-east-1a", "us-east-1b", "us-east-1c"]
+}
+
+variable "notification_emails" {
+  type    = list(string)
+  default = ["megaon1fight0123456@gmail.com"]
 }

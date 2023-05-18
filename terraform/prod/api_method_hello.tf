@@ -38,7 +38,9 @@ resource "aws_api_gateway_integration" "api_gw_hello_integration" {
     "application/x-protobuf"   = "$input.body"
   }
   content_handling = "CONVERT_TO_BINARY"
-
+  depends_on = [
+    aws_api_gateway_method.api_gw_method_hello,
+  ]
 }
 
 resource "aws_api_gateway_method_response" "api_gw_method_response_hello" {
@@ -51,7 +53,8 @@ resource "aws_api_gateway_method_response" "api_gw_method_response_hello" {
   status_code = "200"
   # HTTPメソッドのレスポンスはHTTPメソッドの後に作る必要があるため、明示的な依存を宣言
   depends_on = [
-    aws_api_gateway_method.api_gw_method_hello
+    aws_api_gateway_method.api_gw_method_hello,
+    aws_api_gateway_integration.api_gw_hello_integration
   ]
 }
 
@@ -71,4 +74,9 @@ resource "aws_api_gateway_integration_response" "api_gw_integration_response_hel
     "application/octet-stream" = "$input.body"
     "application/x-protobuf"   = "$input.body"
   }
+
+  depends_on = [
+    aws_api_gateway_method_response.api_gw_method_response_hello,
+    aws_api_gateway_integration.api_gw_hello_integration
+  ]
 }
