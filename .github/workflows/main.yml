@@ -69,14 +69,21 @@ jobs:
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
 
+    # テラフォームディレクトリに移動
+    - name: Move to Terraform directory
+      run: cd terraform/${{ env.TF_VAR_environment }}
+
     - name: Initialize Terraform
-      run: terraform init terraform/${{ env.TF_VAR_environment }}
+      run: terraform init 
+      # terraform/${{ env.TF_VAR_environment }}
 
     - name: Validate Terraform
-      run: terraform validate terraform/${{ env.TF_VAR_environment }}
+      run: terraform validate 
+      # terraform/${{ env.TF_VAR_environment }}
 
     - name: Plan Terraform
-      run: terraform plan -out=tfplan terraform/${{ env.TF_VAR_environment }}
+      run: terraform plan -out=tfplan 
+      # terraform/${{ env.TF_VAR_environment }}
 
     - name: Apply Terraform
       run: terraform apply -auto-approve -input=false tfplan
