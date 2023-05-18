@@ -3,3 +3,4 @@
 lambda/*/target
 .DS_Store
 .terraform.lock.hcl
+.vscode/*

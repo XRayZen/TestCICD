@@ -10,4 +10,10 @@
         "./lambda/hello/Cargo.toml",
         "./lambda/hello/Cargo.toml"
     ],
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/awslabs/goformation/master/schema/cloudformation.schema.json": [
+            "file:///Users/kojimayoshiyuki/Develop/Project2/TestCICD/iam_role/iam-role.yaml",
+            "file:///Users/kojimayoshiyuki/Develop/Project2/TestCICD/iam_role/iam-role.yaml.bak"
+        ]
+    },
 }

@@ -3,7 +3,7 @@
 ```bash
 aws cloudformation create-stack --stack-name TestCICDFix1 --template-body file://iam_role/iam-role.yaml --profile terraform-user --capabilities CAPABILITY_NAMED_IAM
 ```
-- プロファイルを指定しない
+- プロファイルを指定しない場合は`--profile terraform-user`を削除する
 
 - show stack arn
 ```bash
@@ -12,11 +12,11 @@ aws cloudformation describe-stacks --stack-name TestCICDFix1 --query 'Stacks[0].
 
 - delete stack
 ```bash
-aws cloudformation delete-stack --stack-name プロジェクト名-stack --profile AWSプロファイル名
+aws cloudformation delete-stack --stack-name TestCICDFix1 --profile AWSプロファイル名
 ```
 
 
-GitHub Copilot: `cargo-aws-lambda`は、AWS Lambda関数をビルドするためのRustツールチェーンです。このツールチェーンを使用すると、AWS Lambda関数をビルドするために必要なすべての依存関係を含む単一のバイナリをビルドできます。このバイナリは、AWS Lambdaのランタイムに直接アップロードできます。
+`cargo-aws-lambda`は、AWS Lambda関数をビルドするためのRustツールチェーンです。このツールチェーンを使用すると、AWS Lambda関数をビルドするために必要なすべての依存関係を含む単一のバイナリをビルドできます。このバイナリは、AWS Lambdaのランタイムに直接アップロードできます。
 
 `cargo-aws-lambda`を使用する場合、Dockerコンテナにカスタムランタイムを含める必要はありません。AWS Lambdaのランタイムは、AWSが提供するものを使用するため、ランタイムの準備は不要です。`cargo-aws-lambda`は、AWS Lambda関数をビルドするために必要なすべての依存関係を含む単一のバイナリをビルドするため、Dockerコンテナを使用する必要もありません。
 

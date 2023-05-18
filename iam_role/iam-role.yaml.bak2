@@ -4,25 +4,36 @@ Description: "Test CICD IAM Role for GHA"
 Parameters:
   GitHubAccountName:
     Type: String
-    Default: XRayZen
-  RepoName:
+    Default: "XRayZen"
+  RepositoryName:
     Type: String
     Default: TestCICD
+  OIDCProviderArn:
+    Description: Arn for the GitHub OIDC Provider.
+    Default: ""
+    Type: String
+
+Conditions:
+  CreateOIDCProvider: !Equals 
+    - !Ref OIDCProviderArn
+    - ""
 
 Resources:
   Role:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: TestCICD-GithubRole
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
             Action: sts:AssumeRoleWithWebIdentity
             Principal:
-              Federated: !Sub "arn:aws:iam::${AWS::AccountId}:oidc-provider/GitHubOidcProvider"
+              Federated: !If 
+                - CreateOIDCProvider
+                - !Ref GithubOidc
+                - !Ref OIDCProviderArn
             Condition:
               StringLike:
-                token.actions.githubusercontent.com:sub: !Sub repo:${GitHubAccountName}/${RepoName}
+                token.actions.githubusercontent.com:sub: !Sub repo:${GitHubAccountName}/${RepositoryName}:*
 
   Policy:
     Type: AWS::IAM::Policy
@@ -44,6 +55,18 @@ Resources:
             # - 'vpc:*'
             Resource: "*"
 
+  GithubOidc:
+    Type: AWS::IAM::OIDCProvider
+    Condition: CreateOIDCProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList: 
+        - sts.amazonaws.com
+      ThumbprintList:
+        - 6938fd4d98bab03faadb97b34396831e3780aea1
+  
+
 Outputs:
   Role:
-    Value: !GetAtt Role.Arn
+    Value: !GetAtt Role.Arn 
+
