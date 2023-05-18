@@ -16,7 +16,7 @@ variable "project_name" {
 
 variable "project_stage" {
   description = "Project Stage"
-  default     = "dev"
+  default     = "prod"
 }
 
 variable "project_tag" {
@@ -36,5 +36,6 @@ variable "project_owner" {
 # 作成するサブネットに合わせて、アベイラビリティゾーンリストを定義
 variable "availability_zones" {
   type    = list(string)
-  default = ["ap-northeast-1a", "ap-northeast-1c", "ap-northeast-1d"]
+  # us-east-1a, us-east-1b, us-east-1c
+  default = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }

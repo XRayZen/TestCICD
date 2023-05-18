@@ -11,16 +11,17 @@ resource "aws_lambda_permission" "apigw_lambda_permission_hello" {
 data "aws_ecr_image" "hello-ecr-image" {
   repository_name = "${var.project_name}-repo"
   image_tag       = "hello"
+  depends_on      = [module.ecr-lambda]
 }
 
 resource "aws_lambda_function" "lambda_function_hello" {
   function_name = "hello"
   description   = "hello function"
   # 関数の要件に応じた権限が付与されたIAMロールARNを指定する
-  role          = aws_iam_role.lambda_execution_role.arn
+  role = aws_iam_role.lambda_execution_role.arn
   # ファイル名とエントリーポイントを指定する
-  handler       = "hello.main"
-  runtime       = "provided.al2"
+  handler = "hello.main"
+  runtime = "provided.al2"
 
   image_uri = "${module.ecr-lambda.repository_url}:hello"
 
@@ -34,10 +35,10 @@ resource "aws_lambda_function" "lambda_function_hello" {
     }
   }
   # AWSのリソースにアクセスするためにVPCを指定する
-  vpc_config{
+  vpc_config {
     #両方とも指定しないとVPC設定はされていないと判断される
-    subnet_ids         = [module.vpc.public_subnets[0].id]
-    security_group_ids = [module.vpc.public_network_acl_id]
+    subnet_ids         = [data.aws_subnet.public[0].id]
+    security_group_ids = [aws_security_group.lambda-sg.id]
   }
   # 依存関係のあるリソースを指定する
   depends_on = [
@@ -47,18 +48,19 @@ resource "aws_lambda_function" "lambda_function_hello" {
 }
 
 data "aws_ecr_image" "world-ecr-image" {
-  repository_name ="${var.project_name}-repo"
+  repository_name = "${var.project_name}-repo"
   image_tag       = "world"
+  depends_on      = [module.ecr-lambda]
 }
 
 resource "aws_lambda_function" "lambda_function_world" {
   function_name = "world"
   description   = "world function"
   # 関数の要件に応じた権限が付与されたIAMロールARNを指定する
-  role          = aws_iam_role.lambda_execution_role.arn
+  role = aws_iam_role.lambda_execution_role.arn
   # ファイル名とエントリーポイントを指定する
-  handler       = "world.main"
-  runtime       = "provided.al2"
+  handler = "world.main"
+  runtime = "provided.al2"
 
   image_uri = "${module.ecr-lambda.repository_url}:world"
   # メモリサイズの大きさに応じて割り当てられるCPUリソースが変わる
@@ -72,10 +74,10 @@ resource "aws_lambda_function" "lambda_function_world" {
     }
   }
   # AWSのリソースにアクセスするためにVPCを指定する
-  vpc_config{
+  vpc_config {
     #両方とも指定しないとVPC設定はされていないと判断される
-    subnet_ids         = [module.vpc.public_subnets[0].id]
-    security_group_ids = [module.vpc.public_network_acl_id]
+    subnet_ids         = [data.aws_subnet.public[0].id]
+    security_group_ids = [aws_security_group.lambda-sg.id]
   }
   # 依存関係のあるリソースを指定する
   depends_on = [
