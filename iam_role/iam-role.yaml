@@ -22,7 +22,7 @@ Resources:
               Federated: !Sub "arn:aws:iam::${AWS::AccountId}:oidc-provider/GitHubOidcProvider"
             Condition:
               StringLike:
-                token.actions.githubusercontent.com:sub: !Sub repo:${GitHubAccountName}/${RepoName}
+                token.actions.githubusercontent.com:sub: !Sub repo:${GitHubAccountName}/${RepoName}:*
 
   Policy:
     Type: AWS::IAM::Policy
