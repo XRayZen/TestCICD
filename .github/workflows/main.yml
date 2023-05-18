@@ -76,7 +76,7 @@ jobs:
       run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} validate
 
     - name: Plan Terraform
-      run: terraform plan -out=tfplan -chdir=terraform/${{ env.TF_VAR_environment }}
+      run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} plan -out=tfplan 
 
     - name: Apply Terraform
       run: terraform apply -auto-approve -input=false tfplan
