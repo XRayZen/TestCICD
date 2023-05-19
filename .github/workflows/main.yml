@@ -41,14 +41,30 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v2
-      with:
-        context: ./lambda/${{ matrix.function }}
-        file: ./lambda/${{ matrix.function }}/Dockerfile
-        push: true
-        platforms: linux/amd64
-        tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.REPO_ECR_NAME }}:${{ matrix.function }}
+    - name: Build, tag, and push docker image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ env.REPO_ECR_NAME }}
+        IMAGE_TAG: ${{ matrix.function }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./lambda/${{ matrix.function }}
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      
+      # docker buildx build \
+        #   --platform linux/amd64 \
+        #   --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+        #   --file ./lambda/${{ matrix.function }}/Dockerfile \
+        #   --push \
+        #   ./lambda/${{ matrix.function }}
+        
+    # - name: Build and push Docker images
+    #   uses: docker/build-push-action@v2
+    #   with:
+    #     context: ./lambda/${{ matrix.function }}
+    #     file: ./lambda/${{ matrix.function }}/Dockerfile
+    #     push: true
+    #     platforms: linux/amd64
+    #     tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.REPO_ECR_NAME }}:${{ matrix.function }}
 
   deploy_infrastructure:
     needs: build_and_push
