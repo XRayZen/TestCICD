@@ -48,7 +48,7 @@ Resources:
             Action:
               # Admin権限を付与する場合
               - "iam:*"
-            # LamdbaとDynamoDBとApiGatewayとVpcとS3とBudgetとECRを操作する権限を付与する場合
+            # LamdbaとDynamoDBとApiGatewayとVpcとS3とBudgetとECRとEC2とWAFとセキュリティグループとWAFを操作する権限を付与する場合
               - 'lambda:*'
               - 'apigateway:*'
               - 'dynamodb:*'
@@ -56,6 +56,14 @@ Resources:
               - 's3:*'
               - 'budgets:*'
               - 'ecr:*'
+              - 'ec2:*'
+              - 'waf:*'
+              - 'waf-regional:*'
+              - 'wafv2:*'
+              - 'cloudformation:*'
+              - 'cloudwatch:*'
+              - 'cloudtrail:*'
+              - 'cloudfront:*'
             Resource: "*"
 
   GithubOidc:
