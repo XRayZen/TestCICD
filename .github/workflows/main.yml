@@ -47,6 +47,7 @@ jobs:
         context: ./lambda/${{ matrix.function }}
         file: ./lambda/${{ matrix.function }}/Dockerfile
         push: true
+        platforms: linux/amd64
         tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.REPO_ECR_NAME }}:${{ matrix.function }}
 
   deploy_infrastructure:
