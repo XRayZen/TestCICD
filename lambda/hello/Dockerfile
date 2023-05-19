@@ -6,6 +6,7 @@ WORKDIR /build
 ADD Cargo.toml Cargo.toml
 ADD Cargo.lock Cargo.lock
 ADD src src
+ADD build.rs build.rs
 ADD proto proto
 
 # RUN apt-get update
