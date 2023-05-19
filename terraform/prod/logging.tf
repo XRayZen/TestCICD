@@ -84,6 +84,7 @@ resource "aws_s3_bucket_request_payment_configuration" "log_bucket_request_payme
   bucket = aws_s3_bucket.cloudfront_logging.id
   payer  = "BucketOwner"
 }
+
 # CloudFrontのアクセスログ格納用バケットポリシー
 resource "aws_s3_bucket_policy" "log_bucket_policy" {
   bucket = aws_s3_bucket.cloudfront_logging.id
