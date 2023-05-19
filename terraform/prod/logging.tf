@@ -89,52 +89,92 @@ resource "aws_s3_bucket_policy" "log_bucket_policy" {
   bucket = aws_s3_bucket.cloudfront_logging.id
   # "s3:ListBucket" "s3:PutObject"  "s3:GetObject"
   # "Service": "cloudfront.amazonaws.com"
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "AllowCloudFrontToPutLogs",
-      "Effect": "Allow",
-      "Principal": {
-        "*": "*"
+  policy = jsonencode({
+    Version   = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "AllowCloudFrontToPutLogs"
+        Effect    = "Allow"
+        Principal = { "*" = "*" }
+        Action    = "s3:PutObject"
+        Resource  = "arn:aws:s3:::cloudfront-access-log.mini-schna.com/*"
       },
-      "Action": "s3:PutObject",
-      "Resource": "arn:aws:s3:::cloudfront-access-log.mini-schna.com/*"
-    },
-    {
-      "Sid": "AllowCloudFrontToGetLogs",
-      "Effect": "Allow",
-      "Principal": {
-        "*": "*"
+      {
+        Sid       = "AllowCloudFrontToGetLogs"
+        Effect    = "Allow"
+        Principal = { "*" = "*" }
+        Action    = "s3:GetObject"
+        Resource  = "arn:aws:s3:::cloudfront-access-log.mini-schna.com/*"
       },
-      "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::cloudfront-access-log.mini-schna.com/*"
-    },
-    {
-      "Sid": "AllowCloudFrontToDescribeBucket",
-      "Effect": "Allow",
-      "Principal": {
-        "*": "*"
+      {
+        Sid       = "AllowCloudFrontToDescribeBucket"
+        Effect    = "Allow"
+        Principal = { "*" = "*" }
+        Action    = "s3:ListBucket"
+        Resource  = "arn:aws:s3:::cloudfront-access-log.mini-schna.com"
       },
-      "Action": "s3:ListBucket",
-      "Resource": "arn:aws:s3:::cloudfront-access-log.mini-schna.com"
-    },
-    {
-      "Sid": "AddPerm",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "cloudfront.amazonaws.com"
-      },
-      "Action": "s3:PutObject",
-      "Resource": "arn:aws:s3:::mybucket/*",
-      "Condition": {
-        "StringEquals": {
-          "s3:x-amz-acl": "bucket-owner-full-control"
+      {
+        Sid       = "AddPerm"
+        Effect    = "Allow"
+        Principal = { Service = "cloudfront.amazonaws.com" }
+        Action    = "s3:PutObject"
+        Resource  = "${aws_s3_bucket.cloudfront_logging.arn}/*"
+        # "arn:aws:s3:::cloudfront-access-log.mini-schna.com/*"
+        Condition = {
+          StringEquals = {
+            "s3:x-amz-acl" = "bucket-owner-full-control"
+          }
         }
       }
-    }
-  ]
-}
-POLICY
+    ]
+  }
+  )
+#   <<POLICY
+# {
+#   "Version": "2012-10-17",
+#   "Statement": [
+#     {
+#       "Sid": "AllowCloudFrontToPutLogs",
+#       "Effect": "Allow",
+#       "Principal": {
+#         "*": "*"
+#       },
+#       "Action": "s3:PutObject",
+#       "Resource": "arn:aws:s3:::cloudfront-access-log.mini-schna.com/*"
+#     },
+#     {
+#       "Sid": "AllowCloudFrontToGetLogs",
+#       "Effect": "Allow",
+#       "Principal": {
+#         "*": "*"
+#       },
+#       "Action": "s3:GetObject",
+#       "Resource": "arn:aws:s3:::cloudfront-access-log.mini-schna.com/*"
+#     },
+#     {
+#       "Sid": "AllowCloudFrontToDescribeBucket",
+#       "Effect": "Allow",
+#       "Principal": {
+#         "*": "*"
+#       },
+#       "Action": "s3:ListBucket",
+#       "Resource": "arn:aws:s3:::cloudfront-access-log.mini-schna.com"
+#     },
+#     {
+#       "Sid": "AddPerm",
+#       "Effect": "Allow",
+#       "Principal": {
+#         "Service": "cloudfront.amazonaws.com"
+#       },
+#       "Action": "s3:PutObject",
+#       "Resource": "arn:aws:s3:::mybucket/*",
+#       "Condition": {
+#         "StringEquals": {
+#           "s3:x-amz-acl": "bucket-owner-full-control"
+#         }
+#       }
+#     }
+#   ]
+# }
+# POLICY
 }
