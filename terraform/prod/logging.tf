@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "cloudfront_logging_bucket" {
 # CloudFrontのアクセスログ格納用バケット
 ###############################################
 resource "aws_s3_bucket" "cloudfront_logging" {
-  bucket        = "cloudfront-access-log.mini-schna.com"
+  bucket = "cloudfront-access-log.mini-schna.com"
   # policy        = data.aws_iam_policy_document.cloudfront_logging_bucket.json
   force_destroy = false
 }
@@ -118,7 +118,21 @@ resource "aws_s3_bucket_policy" "log_bucket_policy" {
         "*": "*"
       },
       "Action": "s3:ListBucket",
-     "Resource": "arn:aws:s3:::cloudfront-access-log.mini-schna.com"
+      "Resource": "arn:aws:s3:::cloudfront-access-log.mini-schna.com"
+    },
+    {
+      "Sid": "AddPerm",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+      },
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::mybucket/*",
+      "Condition": {
+        "StringEquals": {
+          "s3:x-amz-acl": "bucket-owner-full-control"
+        }
+      }
     }
   ]
 }
