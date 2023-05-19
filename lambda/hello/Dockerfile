@@ -1,37 +1,43 @@
-ARG FUNCTION_DIR="/hello"
-FROM rust:1.69.0-buster as builder
+# Dockerfile for building Rust AWS Lambda function using cargo-aws-lambda
+FROM ghcr.io/cargo-lambda/cargo-lambda:latest as builder
 
-WORKDIR /build
+# Set the working directory
+WORKDIR /usr/src/hello
 
-ADD Cargo.toml Cargo.toml
-ADD Cargo.lock Cargo.lock
-ADD src src
-ADD build.rs build.rs
-ADD proto proto
+# Copy the entire project source to the container
+COPY . ./
 
-# Cache build folders, see: https://stackoverflow.com/a/60590697/7661119
-# Docker Buildkit required
-RUN --mount=type=cache,target=/usr/local/cargo/registry \
-    --mount=type=cache,target=/home/root/app/target \
-    apt-get update && \ 
-    apt-get install -y protobuf-compiler && \
-    apt install musl-tools -y && \
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly && \
-    rustup target add x86_64-unknown-linux-musl && \
-    cargo install cargo-aws-lambda && \ 
-    cargo +nightly lambda build -Z sparse-registry --release --bin hello
-    # cargo build --release --target x86_64-unknown-linux-musl
+# 依存しているパッケージをインストール
+RUN apt-get update
+RUN apt-get install -y protobuf-compiler
 
-# copy artifacts to a clean image
-FROM gcr.io/distroless/static
+# ツールチェインをインストール 
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
+RUN rustup update
 
-# # Include global arg in this stage of the build
-ARG FUNCTION_DIR="/hello"
+# Build the Lambda function
+RUN cargo +nightly lambda build -Z sparse-registry --release --bin hello
 
-# Set the working directory to function root directory
-WORKDIR ${FUNCTION_DIR}
+# copy binary to /usr/comp/
+RUN mkdir -p /usr/comp/
+# COPY /usr/src/hello/target/lambda/hello /usr/comp/
+RUN cp -r /usr/src/hello/target/lambda/hello /usr/comp/
+# remove target/release
+RUN rm -rf /usr/src/hello/target/release
+# 出来なかったらワーキングディレクトリすべて削除に変更する
 
-COPY --from=builder /build/target/lambda/hello ${FUNCTION_DIR}/bootstrap
-# /build/target/x86_64-unknown-linux-musl/release/bootstrap bootstrap
+# 第二ステージ
+# Use the official Amazon Linux image as the base image
+# FROM amazonlinux:2
+# サンプルではpublic.ecr.aws/lambda/provided:al2をつかっている
+# 以下サンプルのコード 上手くいかなかったら置き換える
+FROM public.ecr.aws/lambda/provided:al2
+COPY --from=builder /usr/comp/hello ${LAMBDA_RUNTIME_DIR}/bootstrap
+CMD [ "lambda-handler" ]
 
-ENTRYPOINT [ "./bootstrap" ]
+# Copy the Lambda function binary to the container
+# COPY --from=builder /usr/src/hello/target/lambda/hello /var/task/
+# COPY --from=builder /usr/comp/hello /var/task/
+
+# # Set the CMD to the Lambda function handler
+# CMD [ "hello" ]
