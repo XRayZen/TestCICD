@@ -16,18 +16,21 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     apt-get update && \ 
     apt-get install -y protobuf-compiler && \
     apt install musl-tools -y && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly && \
     rustup target add x86_64-unknown-linux-musl && \
-    cargo build --release --target x86_64-unknown-linux-musl
+    cargo +nightly lambda build -Z sparse-registry --release --bin hello
+    # cargo build --release --target x86_64-unknown-linux-musl
 
 # copy artifacts to a clean image
 FROM gcr.io/distroless/static
 
 # # Include global arg in this stage of the build
-# ARG FUNCTION_DIR
+ARG FUNCTION_DIR="/hello"
 
 # Set the working directory to function root directory
 WORKDIR ${FUNCTION_DIR}
 
-COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap bootstrap
+COPY --from=builder /build/target/lambda/hello ${FUNCTION_DIR}/bootstrap
+# /build/target/x86_64-unknown-linux-musl/release/bootstrap bootstrap
 
 ENTRYPOINT [ "./bootstrap" ]

@@ -2,5 +2,6 @@
 .vscode
 # Rustフォルダにある/targetフォルダを無視する
 lambda/*/target
+lambda/*/target.mol
 .DS_Store
 .terraform.lock.hcl
