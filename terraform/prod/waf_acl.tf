@@ -59,78 +59,79 @@ resource "aws_wafv2_web_acl" "waf" {
       sampled_requests_enabled   = false
     }
   }
-  # AWSManagedRulesAmazonIpReputationList
-  rule {
-    name     = "aws_managed_rules_amazon_ip_reputation_list"
-    priority = 3
-    # Webリクエストを上書きするかどうか
-    # マネージドルールを参照する時に必要
-    override_action {
-      # 上書きしない
-      none {}
-    }
-    statement {
-      # マネージドルールを参照する
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesAmazonIpReputationList"
-        vendor_name = "AWS"
-      }
-    }
-    # Amazon CloudWatchのメトリクスとWebリクエストのサンプル収集を定義
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "waf_rg_amazon_ip_reputation_list"
-      sampled_requests_enabled   = false
-    }
-  }
-  # AWSManagedRulesAnonymousIpList
-  rule {
-    name     = "aws_managed_rules_anonymous_ip_list"
-    priority = 4
-    # Webリクエストを上書きするかどうか
-    # マネージドルールを参照する時に必要
-    override_action {
-      # 上書きしない
-      none {}
-    }
-    statement {
-      # マネージドルールを参照する
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesAnonymousIpList"
-        vendor_name = "AWS"
-      }
-    }
-    # Amazon CloudWatchのメトリクスとWebリクエストのサンプル収集を定義
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "waf_rg_anonymous_ip_list"
-      sampled_requests_enabled   = false
-    }
-  }
-  # AWSManagedRulesKnownBadInputsRuleSet
-  rule {
-    name     = "aws_managed_rules_known_bad_inputs_rule_set"
-    priority = 5
-    # Webリクエストを上書きするかどうか
-    # マネージドルールを参照する時に必要
-    override_action {
-      # 上書きしない
-      none {}
-    }
-    statement {
-      # マネージドルールを参照する
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesKnownBadInputsRuleSet"
-        vendor_name = "AWS"
-      }
-    }
-    # Amazon CloudWatchのメトリクスとWebリクエストのサンプル収集を定義
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "waf_rg_known_bad_inputs_rule_set"
-      sampled_requests_enabled   = false
-    }
-  }
+  # お金がかかるので極力コメントアウト
+  # # AWSManagedRulesAmazonIpReputationList
+  # rule {
+  #   name     = "aws_managed_rules_amazon_ip_reputation_list"
+  #   priority = 3
+  #   # Webリクエストを上書きするかどうか
+  #   # マネージドルールを参照する時に必要
+  #   override_action {
+  #     # 上書きしない
+  #     none {}
+  #   }
+  #   statement {
+  #     # マネージドルールを参照する
+  #     managed_rule_group_statement {
+  #       name        = "AWSManagedRulesAmazonIpReputationList"
+  #       vendor_name = "AWS"
+  #     }
+  #   }
+  #   # Amazon CloudWatchのメトリクスとWebリクエストのサンプル収集を定義
+  #   visibility_config {
+  #     cloudwatch_metrics_enabled = true
+  #     metric_name                = "waf_rg_amazon_ip_reputation_list"
+  #     sampled_requests_enabled   = false
+  #   }
+  # }
+  # # AWSManagedRulesAnonymousIpList
+  # rule {
+  #   name     = "aws_managed_rules_anonymous_ip_list"
+  #   priority = 4
+  #   # Webリクエストを上書きするかどうか
+  #   # マネージドルールを参照する時に必要
+  #   override_action {
+  #     # 上書きしない
+  #     none {}
+  #   }
+  #   statement {
+  #     # マネージドルールを参照する
+  #     managed_rule_group_statement {
+  #       name        = "AWSManagedRulesAnonymousIpList"
+  #       vendor_name = "AWS"
+  #     }
+  #   }
+  #   # Amazon CloudWatchのメトリクスとWebリクエストのサンプル収集を定義
+  #   visibility_config {
+  #     cloudwatch_metrics_enabled = true
+  #     metric_name                = "waf_rg_anonymous_ip_list"
+  #     sampled_requests_enabled   = false
+  #   }
+  # }
+  # # AWSManagedRulesKnownBadInputsRuleSet
+  # rule {
+  #   name     = "aws_managed_rules_known_bad_inputs_rule_set"
+  #   priority = 5
+  #   # Webリクエストを上書きするかどうか
+  #   # マネージドルールを参照する時に必要
+  #   override_action {
+  #     # 上書きしない
+  #     none {}
+  #   }
+  #   statement {
+  #     # マネージドルールを参照する
+  #     managed_rule_group_statement {
+  #       name        = "AWSManagedRulesKnownBadInputsRuleSet"
+  #       vendor_name = "AWS"
+  #     }
+  #   }
+  #   # Amazon CloudWatchのメトリクスとWebリクエストのサンプル収集を定義
+  #   visibility_config {
+  #     cloudwatch_metrics_enabled = true
+  #     metric_name                = "waf_rg_known_bad_inputs_rule_set"
+  #     sampled_requests_enabled   = false
+  #   }
+  # }
 
   visibility_config {
     cloudwatch_metrics_enabled = true
@@ -203,9 +204,6 @@ resource "aws_wafv2_rule_group" "waf_rule_group" {
     Name = "waf_rule_group"
   }
 }
-
-# API GatewayをCloudFrontに関連付ける
-
 
 
 

@@ -14,7 +14,7 @@ Parameters:
     Type: String
 
 Conditions:
-  CreateOIDCProvider: !Equals 
+  CreateOIDCProvider: !Equals
     - !Ref OIDCProviderArn
     - ""
 
@@ -27,7 +27,7 @@ Resources:
           - Effect: Allow
             Action: sts:AssumeRoleWithWebIdentity
             Principal:
-              Federated: !If 
+              Federated: !If
                 - CreateOIDCProvider
                 - !Ref GithubOidc
                 - !Ref OIDCProviderArn
@@ -46,24 +46,23 @@ Resources:
         Statement:
           - Effect: Allow
             Action:
-              # Admin権限を付与する場合
+              # 使うAWSサービスに必要な権限を追加
               - "iam:*"
-            # LamdbaとDynamoDBとApiGatewayとVpcとS3とBudgetとECRとEC2とWAFとセキュリティグループとWAFを操作する権限を付与する場合
-              - 'lambda:*'
-              - 'apigateway:*'
-              - 'dynamodb:*'
-              - 'vpc:*'
-              - 's3:*'
-              - 'budgets:*'
-              - 'ecr:*'
-              - 'ec2:*'
-              - 'waf:*'
-              - 'waf-regional:*'
-              - 'wafv2:*'
-              - 'cloudformation:*'
-              - 'cloudwatch:*'
-              - 'cloudtrail:*'
-              - 'cloudfront:*'
+              - "lambda:*"
+              - "apigateway:*"
+              - "dynamodb:*"
+              - "vpc:*"
+              - "s3:*"
+              - "budgets:*"
+              - "ecr:*"
+              - "ec2:*"
+              - "waf:*"
+              - "waf-regional:*"
+              - "wafv2:*"
+              - "cloudformation:*"
+              - "cloudwatch:*"
+              - "cloudtrail:*"
+              - "cloudfront:*"
             Resource: "*"
 
   GithubOidc:
@@ -71,13 +70,11 @@ Resources:
     Condition: CreateOIDCProvider
     Properties:
       Url: https://token.actions.githubusercontent.com
-      ClientIdList: 
+      ClientIdList:
         - sts.amazonaws.com
       ThumbprintList:
         - 6938fd4d98bab03faadb97b34396831e3780aea1
-  
 
 Outputs:
   Role:
-    Value: !GetAtt Role.Arn 
-
+    Value: !GetAtt Role.Arn

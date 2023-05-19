@@ -30,7 +30,7 @@ jobs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
-
+    # AWS OIDC認証
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -60,7 +60,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
+    # AWS OIDC認証
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
