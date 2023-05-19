@@ -17,6 +17,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/home/root/app/target \
     apt-get update && \ 
     apt-get install -y protobuf-compiler && \
+    apt install musl-tools -y && \
     rustup target add x86_64-unknown-linux-musl && \
     cargo build --release --target x86_64-unknown-linux-musl
 
