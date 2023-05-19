@@ -79,6 +79,6 @@ jobs:
       run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} plan -out=tfplan 
 
     - name: Apply Terraform
-      run: terraform apply -auto-approve -input=false tfplan
+      run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} apply -auto-approve -input=false tfplan
 
 
