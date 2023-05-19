@@ -9,9 +9,6 @@ ADD src src
 ADD build.rs build.rs
 ADD proto proto
 
-# RUN apt-get update
-# RUN apt-get install -y protobuf-compiler
-
 # Cache build folders, see: https://stackoverflow.com/a/60590697/7661119
 # Docker Buildkit required
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
@@ -25,8 +22,8 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 # copy artifacts to a clean image
 FROM gcr.io/distroless/static
 
-# Include global arg in this stage of the build
-ARG FUNCTION_DIR
+# # Include global arg in this stage of the build
+# ARG FUNCTION_DIR
 
 # Set the working directory to function root directory
 WORKDIR ${FUNCTION_DIR}
