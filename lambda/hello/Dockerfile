@@ -32,7 +32,8 @@ RUN rm -rf /usr/src/hello/target/release
 # サンプルではpublic.ecr.aws/lambda/provided:al2をつかっている
 # 以下サンプルのコード 上手くいかなかったら置き換える
 FROM public.ecr.aws/lambda/provided:al2
-COPY --from=builder /usr/comp/hello ${LAMBDA_RUNTIME_DIR}/bootstrap
+COPY --from=builder /usr/comp/hello /bootstrap
+# ${LAMBDA_RUNTIME_DIR}/bootstrap
 CMD [ "lambda-handler" ]
 
 # Copy the Lambda function binary to the container
