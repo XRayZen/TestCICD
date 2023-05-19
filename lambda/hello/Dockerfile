@@ -1,43 +1,33 @@
-# Dockerfile for building Rust AWS Lambda function using cargo-aws-lambda
-FROM ghcr.io/cargo-lambda/cargo-lambda:latest as builder
+ARG FUNCTION_DIR="/hello"
+FROM rust:1.69.0-buster as builder
 
-# Set the working directory
-WORKDIR /usr/src/hello
+WORKDIR /build
 
-# Copy the entire project source to the container
-COPY . ./
+ADD Cargo.toml Cargo.toml
+ADD Cargo.lock Cargo.lock
+ADD src src
+ADD proto proto
 
-# 依存しているパッケージをインストール
 RUN apt-get update
 RUN apt-get install -y protobuf-compiler
 
-# ツールチェインをインストール 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
-RUN rustup update
+# Cache build folders, see: https://stackoverflow.com/a/60590697/7661119
+# Docker Buildkit required
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/home/root/app/target \
+    rustup target add x86_64-unknown-linux-musl && \
+    cargo build --release --target x86_64-unknown-linux-musl
 
-# Build the Lambda function
-RUN cargo +nightly lambda build -Z sparse-registry --release --bin hello
+# copy artifacts to a clean image
+FROM gcr.io/distroless/static
 
-# copy binary to /usr/comp/
-RUN mkdir -p /usr/comp/
-# COPY /usr/src/hello/target/lambda/hello /usr/comp/
-RUN cp -r /usr/src/hello/target/lambda/hello /usr/comp/
-# remove target/release
-RUN rm -rf /usr/src/hello/target/release
-# 出来なかったらワーキングディレクトリすべて削除に変更する
+# Include global arg in this stage of the build
+ARG FUNCTION_DIR
 
-# 第二ステージ
-# Use the official Amazon Linux image as the base image
-FROM amazonlinux:2
-# サンプルではpublic.ecr.aws/lambda/provided:al2をつかっている
-# 以下サンプルのコード 上手くいかなかったら置き換える
-# FROM public.ecr.aws/lambda/provided:al2
-# COPY --from=build /tmp/target/x86_64-unknown-linux-musl/release/api  ${LAMBDA_RUNTIME_DIR}/bootstrap
-# CMD [ "lambda-handler" ]
+# Set the working directory to function root directory
+WORKDIR ${FUNCTION_DIR}
 
-# Copy the Lambda function binary to the container
-# COPY --from=builder /usr/src/hello/target/lambda/hello /var/task/
-COPY --from=builder /usr/comp/hello /var/task/
+COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap bootstrap
 
-# Set the CMD to the Lambda function handler
+ENTRYPOINT [ "./bootstrap" ]
 CMD [ "hello" ]

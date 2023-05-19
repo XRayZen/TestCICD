@@ -14,7 +14,7 @@ resource "aws_lambda_function" "lambda_function_hello" {
   # 関数の要件に応じた権限が付与されたIAMロールARNを指定する
   role = aws_iam_role.lambda_execution_role.arn
   # ファイル名とエントリーポイントを指定する
-  handler = "hello.main"
+  handler = "hello"
   runtime = "provided.al2"
   # メモリサイズの大きさに応じて割り当てられるCPUリソースが変わる
   # 最小値は128MB、最大値は3008MB
