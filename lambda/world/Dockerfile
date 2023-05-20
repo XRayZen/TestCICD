@@ -1,4 +1,5 @@
 ARG FUNCTION_DIR="/world"
+# https://hub.docker.com/layers/library/rust/1.69.0-buster/images/sha256-f86d4e0030192bb12b3464a0bf89fb972e0b653504a867c7d1078fd8677736be?context=explore
 FROM rust:1.69.0-buster as builder
 
 WORKDIR /build
@@ -6,33 +7,23 @@ WORKDIR /build
 ADD Cargo.toml Cargo.toml
 ADD Cargo.lock Cargo.lock
 ADD src src
-# GRPCに使う
-# ADD build.rs build.rs
-# ADD proto proto
 
 # Cache build folders, see: https://stackoverflow.com/a/60590697/7661119
 # Docker Buildkit required
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/home/root/app/target \
-    # apt-get update && \ 
-    # apt-get install -y protobuf-compiler && \
-    # apt install musl-tools -y && \
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly && \
     rustup target add x86_64-unknown-linux-musl && \
-    cargo install cargo-aws-lambda && \ 
-    cargo +nightly lambda build -Z sparse-registry --release --bin world
-    # cargo build --release --target x86_64-unknown-linux-musl
+    cargo build --release --target x86_64-unknown-linux-musl
 
 # copy artifacts to a clean image
 FROM gcr.io/distroless/static
 
-# # Include global arg in this stage of the build
+# Include global arg in this stage of the build
 ARG FUNCTION_DIR
 
 # Set the working directory to function root directory
 WORKDIR ${FUNCTION_DIR}
 
-COPY --from=builder /build/target/lambda/${FUNCTION_DIR} ${FUNCTION_DIR}/bootstrap
-# /build/target/x86_64-unknown-linux-musl/release/bootstrap bootstrap
+COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap bootstrap
 
 ENTRYPOINT [ "./bootstrap" ]
