@@ -1,5 +1,4 @@
 .terraform
-.vscode/*
 # Rustフォルダにある/targetフォルダを無視する
 lambda/*/target
 lambda/*/target.mol
