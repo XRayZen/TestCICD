@@ -41,6 +41,13 @@ data "aws_iam_policy_document" "lambda_access_policy" {
       "ecr:BatchCheckLayerAvailability",
       "ecr:GetDownloadUrlForLayer",
       "ecr:BatchGetImage",
+      "ecr:GetLifecyclePolicy",
+      "ecr:GetLifecyclePolicyPreview",
+      "ecr:ListImages",
+      "ecr:DescribeRepositories",
+      "ecr:DescribeImages",
+      "ecr:DescribeImageScanFindings",
+      "ecr:InitiateLayerUpload",
       # DynamoDB用ポリシー
       "dynamodb:BatchGetItem",
       "dynamodb:GetItem",
