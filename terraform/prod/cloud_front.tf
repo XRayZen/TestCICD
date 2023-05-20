@@ -1,7 +1,7 @@
 
 resource "aws_cloudfront_distribution" "cf_dist" {
   enabled    = true
-  web_acl_id = aws_wafv2_web_acl.waf.id
+  web_acl_id = aws_wafv2_web_acl.waf.arn
   origin {
     domain_name = replace(aws_api_gateway_deployment.api_gw_deploy.invoke_url, "/^https?://([^/]*).*/", "$1")
     origin_id   = "apigw_root"
