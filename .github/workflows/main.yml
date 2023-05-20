@@ -47,7 +47,7 @@ jobs:
         ECR_REPOSITORY: ${{ env.REPO_ECR_NAME }}
         IMAGE_TAG: ${{ matrix.function }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./lambda/${{ matrix.function }}
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./lambda/${{ matrix.function }} --build-arg BUILDKIT_INLINE_CACHE=1
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   deploy_infrastructure:
