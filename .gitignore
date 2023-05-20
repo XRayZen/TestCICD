@@ -1,7 +1,9 @@
 .terraform
-.vscode
+.vscode/*
 # Rustフォルダにある/targetフォルダを無視する
 lambda/*/target
 lambda/*/target.mol
+client/api_client/target
 .DS_Store
 .terraform.lock.hcl
+grpc_url.txt

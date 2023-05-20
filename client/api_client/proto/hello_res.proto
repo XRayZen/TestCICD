@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package hello_api.response;
+
+message HelloResponse {
+  ApiResType api_res_type = 1;
+  oneof api_res {
+    AddUserResponse add_user_response = 2;
+    GetUserResponse get_user_response = 3;
+    ErrorResponse error_response = 4;
+  }
+}
+
+enum ApiResType {
+  API_RES_TYPE_UNSPECIFIED = 0;
+  API_RES_TYPE_ERROR = 1;
+  API_RES_TYPE_SUCCESS = 2;
+}
+
+message AddUserResponse { string message = 1; }
+
+message GetUserResponse { string message = 1; }
+
+message ErrorResponse { string message = 1; }
