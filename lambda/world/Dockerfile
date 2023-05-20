@@ -20,7 +20,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly && \
     rustup target add x86_64-unknown-linux-musl && \
     cargo install cargo-aws-lambda && \ 
-    cargo +nightly lambda build -Z sparse-registry --release --bin ${FUNCTION_DIR}
+    cargo +nightly lambda build -Z sparse-registry --release --bin world
     # cargo build --release --target x86_64-unknown-linux-musl
 
 # copy artifacts to a clean image
