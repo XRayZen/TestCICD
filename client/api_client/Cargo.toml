@@ -2,7 +2,25 @@
 name = "api_client"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+tokio = { version = "1", features = ["full"] }
+tracing = { version = "0.1", features = ["log"] }
+tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt"] }
+anyhow = "1.0.71"
+typed-builder = "0.14.0"
+async-trait = "0.1.51"
+mockall = {version = "0.11.4"}
+bytes = "1.4.0"
+prost = "0.11.9"
+protobuf = "3.2.0"
+
+[build_dependencies]
+prost-build = { version = "0.11.9"}
+protobuf-codegen = "3.2.0"
+# clippyを使う
+[dev-dependencies]
+clippy = "0.0.302"

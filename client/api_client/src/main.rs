@@ -1,3 +1,11 @@
+use std::fs;
+
 fn main() {
-    println!("Hello, world!");
+    let grpc_url = fs::read_to_string("grpc_url.txt").expect("Failed to read grpc_url.txt");
+    
+
+
+
+
+
 }
