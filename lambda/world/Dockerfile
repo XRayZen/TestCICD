@@ -1,43 +1,38 @@
-# Dockerfile for building Rust AWS Lambda function using cargo-aws-lambda
-FROM ghcr.io/cargo-lambda/cargo-lambda:latest as builder
+ARG FUNCTION_DIR="/world"
+FROM rust:1.69.0-buster as builder
 
-# Set the working directory
-WORKDIR /usr/src/world
+WORKDIR /build
 
-# Copy the entire project source to the container
-COPY . ./
+ADD Cargo.toml Cargo.toml
+ADD Cargo.lock Cargo.lock
+ADD src src
+# GRPCに使う
+# ADD build.rs build.rs
+# ADD proto proto
 
-# 依存しているパッケージをインストール
-RUN apt-get update
-RUN apt-get install -y protobuf-compiler
+# Cache build folders, see: https://stackoverflow.com/a/60590697/7661119
+# Docker Buildkit required
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/home/root/app/target \
+    # apt-get update && \ 
+    # apt-get install -y protobuf-compiler && \
+    # apt install musl-tools -y && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly && \
+    rustup target add x86_64-unknown-linux-musl && \
+    cargo install cargo-aws-lambda && \ 
+    cargo +nightly lambda build -Z sparse-registry --release --bin ${FUNCTION_DIR}
+    # cargo build --release --target x86_64-unknown-linux-musl
 
-# ツールチェインをインストール 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
-RUN rustup update
+# copy artifacts to a clean image
+FROM gcr.io/distroless/static
 
-# Build the Lambda function
-RUN cargo +nightly lambda build -Z sparse-registry --release --bin world
+# # Include global arg in this stage of the build
+ARG FUNCTION_DIR
 
-# copy binary to /usr/comp/
-RUN mkdir -p /usr/comp/
-# COPY /usr/src/world/target/lambda/world /usr/comp/
-RUN cp -r /usr/src/world/target/lambda/world /usr/comp/
-# remove target/release
-RUN rm -rf /usr/src/world/target/release
-# 出来なかったらワーキングディレクトリすべて削除に変更する
+# Set the working directory to function root directory
+WORKDIR ${FUNCTION_DIR}
 
-# 第二ステージ
-# Use the official Amazon Linux image as the base image
-FROM amazonlinux:2
-# サンプルではpublic.ecr.aws/lambda/provided:al2をつかっている
-# 以下サンプルのコード 上手くいかなかったら置き換える
-# FROM public.ecr.aws/lambda/provided:al2
-# COPY --from=build /tmp/target/x86_64-unknown-linux-musl/release/api  ${LAMBDA_RUNTIME_DIR}/bootstrap
-# CMD [ "lambda-handler" ]
+COPY --from=builder /build/target/lambda/${FUNCTION_DIR} ${FUNCTION_DIR}/bootstrap
+# /build/target/x86_64-unknown-linux-musl/release/bootstrap bootstrap
 
-# Copy the Lambda function binary to the container
-# COPY --from=builder /usr/src/world/target/lambda/world /var/task/
-COPY --from=builder /usr/comp/world /var/task/
-
-# Set the CMD to the Lambda function handler
-CMD [ "world" ]
+ENTRYPOINT [ "./bootstrap" ]
