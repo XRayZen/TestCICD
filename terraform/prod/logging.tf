@@ -91,7 +91,7 @@ resource "aws_s3_bucket_policy" "log_bucket_policy" {
   # "s3:ListBucket" "s3:PutObject"  "s3:GetObject"
   # "Service": "cloudfront.amazonaws.com"
   policy = jsonencode({
-    Version   = "2012-10-17"
+    Version = "2012-10-17"
     Statement = [
       {
         Sid       = "AllowCloudFrontToPutLogs"
@@ -128,6 +128,23 @@ resource "aws_s3_bucket_policy" "log_bucket_policy" {
         }
       }
     ]
-  }
+    }
   )
+}
+
+resource "aws_s3_bucket_ownership_controls" "log_bucket_ownership" {
+  bucket = aws_s3_bucket.cloudfront_logging.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "log_bucket_acl" {
+  bucket = aws_s3_bucket.cloudfront_logging.id
+  acl    = "public-read"
+
+  depends_on = [
+    aws_s3_bucket.cloudfront_logging,
+    aws_s3_bucket_policy.log_bucket_policy
+  ]
 }

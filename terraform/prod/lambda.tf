@@ -13,9 +13,9 @@ resource "aws_lambda_function" "lambda_function_hello" {
   description   = "hello function"
   # 関数の要件に応じた権限が付与されたIAMロールARNを指定する
   role = aws_iam_role.lambda_execution_role.arn
-  # ファイル名とエントリーポイントを指定する
-  handler = "lambda-handler"
-  runtime = "provided.al2"
+  # ファイル名とエントリーポイントを指定するが、イメージを使うので不要
+  # handler = "lambda-handler"
+  # runtime = "provided.al2"
   # メモリサイズの大きさに応じて割り当てられるCPUリソースが変わる
   # 最小値は128MB、最大値は3008MB
   memory_size = 128
@@ -47,9 +47,7 @@ resource "aws_lambda_function" "lambda_function_world" {
   description   = "world function"
   # 関数の要件に応じた権限が付与されたIAMロールARNを指定する
   role = aws_iam_role.lambda_execution_role.arn
-  # ファイル名とエントリーポイントを指定する
-  handler = "world.main"
-  runtime = "provided.al2"
+  # ファイル名とエントリーポイントを指定するが、イメージを使うので不要
   # メモリサイズの大きさに応じて割り当てられるCPUリソースが変わる
   # 最小値は128MB、最大値は3008MB
   memory_size = 128
