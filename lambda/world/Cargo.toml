@@ -14,6 +14,10 @@ edition = "2021"
 # add the latest version of a dependency to the list,
 # and it will keep the alphabetic ordering for you.
 
+[[bin]]
+name = "bootstrap"
+path = "src/main.rs"
+
 [dependencies]
 lambda_http = { version = "0.8.0", default-features = false, features = ["apigw_rest"] }
 lambda_runtime = "0.8.0"
