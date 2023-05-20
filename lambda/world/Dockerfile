@@ -13,7 +13,7 @@ ADD src src
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/home/root/app/target \
     rustup target add x86_64-unknown-linux-musl && \
-    $ cargo build --release --target x86_64-unknown-linux-musl --bin bootstrap
+    cargo build --release --target x86_64-unknown-linux-musl --bin bootstrap
 
 # copy artifacts to a clean image
 FROM gcr.io/distroless/static
