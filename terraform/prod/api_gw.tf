@@ -32,6 +32,7 @@ resource "aws_api_gateway_deployment" "api_gw_deploy" {
   rest_api_id = aws_api_gateway_rest_api.api_gw_rest_api.id
   depends_on = [
     aws_api_gateway_integration.api_gw_hello_integration,
+    aws_api_gateway_integration.api_gw_world_integration,
   ]
   # これ以降の紐付けを維持する為の設定
   lifecycle {

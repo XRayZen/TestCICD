@@ -42,6 +42,15 @@ resource "aws_lambda_function" "lambda_function_hello" {
   ]
 }
 
+resource "aws_lambda_permission" "apigw_lambda_permission_world" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_function_world.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.api_gw_rest_api.execution_arn}/*"
+  # "${aws_api_gateway_rest_api.api_gw_rest_api.execution_arn}/*/*/*"
+}
+
 resource "aws_lambda_function" "lambda_function_world" {
   function_name = "world"
   description   = "world function"
