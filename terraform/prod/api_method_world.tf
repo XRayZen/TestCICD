@@ -61,9 +61,9 @@ resource "aws_api_gateway_integration_response" "api_gw_integration_response_wor
     "application/json" = "{ \"body\": $input.json('$') }"
   }
 
-  depends_on = [ 
+  depends_on = [
     aws_api_gateway_integration.api_gw_world_integration,
-   ]
+  ]
 }
 
 
