@@ -47,8 +47,17 @@ resource "aws_lambda_permission" "apigw_lambda_permission_world" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda_function_world.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.api_gw_rest_api.execution_arn}/*"
+  source_arn    = "${aws_api_gateway_rest_api.api_gw_rest_api.execution_arn}"
+  # /*"
   # "${aws_api_gateway_rest_api.api_gw_rest_api.execution_arn}/*/*/*"
+}
+# ラムダにECRへのアクセス権限を付与する
+resource "aws_lambda_permission" "ecr_lambda_permission_ecr_world" {
+  statement_id  = "AllowExecutionFromECR"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda_function_world.function_name
+  principal     = "ecr.amazonaws.com"
+  source_arn    = module.ecr-lambda.repository_arn
 }
 
 resource "aws_lambda_function" "lambda_function_world" {
