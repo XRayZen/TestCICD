@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 # copy artifacts to a clean image
 FROM gcr.io/distroless/static
 
-# Include global arg in this stage of the build
+# ビルドのこの段階でグローバルargを含める
 ARG FUNCTION_DIR
 
 # Set the working directory to function root directory
@@ -27,3 +27,4 @@ WORKDIR ${FUNCTION_DIR}
 COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap /bootstrap
 
 ENTRYPOINT [ "./bootstrap" ]
+CMD [ "world" ]
