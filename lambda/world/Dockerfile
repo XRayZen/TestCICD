@@ -24,6 +24,6 @@ ARG FUNCTION_DIR
 # Set the working directory to function root directory
 WORKDIR ${FUNCTION_DIR}
 
-COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap bootstrap
+COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap /bootstrap
 
 ENTRYPOINT [ "./bootstrap" ]
