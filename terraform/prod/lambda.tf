@@ -37,7 +37,7 @@ resource "aws_lambda_function" "lambda_function_hello" {
   }
   # 依存関係のあるリソースを指定する
   depends_on = [
-    module.ecr-lambda,
+    # module.ecr-lambda,
     module.vpc
   ]
 }
@@ -78,7 +78,7 @@ resource "aws_lambda_function" "lambda_function_world" {
   }
   # 依存関係のあるリソースを指定する
   depends_on = [
-    module.ecr-lambda,
+    # module.ecr-lambda,
     module.vpc
   ]
 }
