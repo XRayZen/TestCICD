@@ -7,7 +7,7 @@ use lambda_http::{run, service_fn, Body, Error, Request, RequestExt, Response};
 async fn function_handler(_event: Request) -> Result<Response<Body>, Error> {
 
     let message = format!("Hello this is an AWS Lambda HTTP request");
-
+    
     // Return something that implements IntoResponse.
     // It will be serialized to the right response event automatically by the runtime
     let resp = Response::builder()
@@ -27,6 +27,6 @@ async fn main() -> Result<(), Error> {
         // disabling time is handy because CloudWatch will add the ingestion time.
         .without_time()
         .init();
-
+    
     run(service_fn(function_handler)).await
 }

@@ -4,6 +4,10 @@ module "ecr-lambda" {
   version                         = "1.6.0"
   repository_name                 = "${var.project_name}-repo"
   repository_image_tag_mutability = "MUTABLE"
+  # ECRリポジトリにアクセスするLambdaのARNを指定する
+  repository_lambda_read_access_arns = [
+    aws_lambda_function.lambda_function_hello.arn,
+  aws_lambda_function.lambda_function_world.arn, ]
   repository_lifecycle_policy = jsonencode({
     rules = [
       {
