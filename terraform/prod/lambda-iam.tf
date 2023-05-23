@@ -16,7 +16,19 @@ resource "aws_iam_role" "lambda_execution_role" {
     ]
   })
 }
-# やっぱりJsonで定義した方がフレキシブルだし、可読性も高い
+
+resource "aws_iam_role_policy_attachment" "lambda_access_policy_attachment" {
+  policy_arn = aws_iam_policy.lambda_access_iam_policy.arn
+  role       = aws_iam_role.lambda_execution_role.name
+}
+
+# lambda用のaws_iam_policyを定義する
+resource "aws_iam_policy" "lambda_access_iam_policy" {
+  name        = "lambda_access_iam_policy"
+  description = "lambda_access_iam_policy"
+  policy      = data.aws_iam_policy_document.lambda_access_policy.json
+}
+
 # VPC用のaws_iam_policy_documentを定義する
 data "aws_iam_policy_document" "lambda_access_policy" {
   statement {
@@ -53,25 +65,18 @@ data "aws_iam_policy_document" "lambda_access_policy" {
       "dynamodb:UpdateItem",
       "dynamodb:DeleteItem",
       # API Gatewayへのアクセスを許可する
-      "execute-api:Invoke"
+      "execute-api:Invoke",
+      # クラウドウォッチログを許可する
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
     ]
-
     resources = ["*"]
   }
 }
 
-# lambda用のaws_iam_policyを定義する
-resource "aws_iam_policy" "lambda_access_iam_policy" {
-  name        = "lambda_access_iam_policy"
-  description = "lambda_access_iam_policy"
-  policy      = data.aws_iam_policy_document.lambda_access_policy.json
-}
 
 
-resource "aws_iam_role_policy_attachment" "lambda_access_policy_attachment" {
-  policy_arn = aws_iam_policy.lambda_access_iam_policy.arn
-  role       = aws_iam_role.lambda_execution_role.name
-}
 
 
 
