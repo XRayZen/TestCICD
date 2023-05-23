@@ -8,19 +8,19 @@ module "ecr-lambda" {
   repository_lambda_read_access_arns = [
     aws_lambda_function.lambda_function_hello.arn,
   aws_lambda_function.lambda_function_world.arn, ]
-  repository_read_access_arns = [
+  repository_read_write_access_arns = [
     aws_iam_role.lambda_execution_role.arn
   ]
   repository_lifecycle_policy = jsonencode({
     rules = [
       {
         rulePriority = 1,
-        description  = "Keep last 30 images",
+        description  = "Keep last 5 images",
         selection = {
           tagStatus     = "tagged",
           tagPrefixList = ["v"],
           countType     = "imageCountMoreThan",
-          countNumber   = 30
+          countNumber   = 5
         },
         action = {
           type = "expire"
