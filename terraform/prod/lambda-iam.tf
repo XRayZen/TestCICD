@@ -35,7 +35,6 @@ data "aws_iam_policy_document" "lambda_access_policy" {
     effect = "Allow"
     actions = [
       # VPC用iam_policy
-      # AWSLambdaVPCAccessExecutionRole
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
@@ -49,12 +48,11 @@ data "aws_iam_policy_document" "lambda_access_policy" {
       "ec2:DescribeSecurityGroups",
       "ec2:DescribeVpcs",
       # ECRを読み込みを許可するポリシー
-      # "ecr:GetAuthorizationToken",
-      # "ecr:BatchCheckLayerAvailability",
-      # "ecr:GetDownloadUrlForLayer",
-      # "ecr:BatchGetImage",
-      # "ecr:InitiateLayerUpload",
-      "ecr:*",
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "ecr:DescribeRepositories",
       # DynamoDB用ポリシー
       "dynamodb:BatchGetItem",
       "dynamodb:GetItem",
@@ -69,7 +67,9 @@ data "aws_iam_policy_document" "lambda_access_policy" {
       # クラウドウォッチログを許可する
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
-      "logs:PutLogEvents"
+      "logs:PutLogEvents",
+      # CloudWatchを許可する
+      "cloudwatch:*",
     ]
     resources = ["*"]
   }
