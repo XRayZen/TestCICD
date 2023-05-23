@@ -18,7 +18,6 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 # copy artifacts to a clean image
 FROM gcr.io/distroless/static
 
-
 # Set the working directory to function root directory
 WORKDIR "/world"
 
