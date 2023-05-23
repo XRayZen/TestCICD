@@ -20,10 +20,9 @@ FROM gcr.io/distroless/static
 
 
 # Set the working directory to function root directory
-ARG FUNCTION_DIR="/world"
-WORKDIR ${FUNCTION_DIR}
+WORKDIR "/world"
 
 COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap /bootstrap
 
-ENTRYPOINT [ "/bootstrap" ]
+ENTRYPOINT [ "/world/bootstrap" ]
 # CMD [ "world" ]
