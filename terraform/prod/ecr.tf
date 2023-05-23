@@ -8,7 +8,9 @@ module "ecr-lambda" {
   repository_lambda_read_access_arns = [
     aws_lambda_function.lambda_function_hello.arn,
   aws_lambda_function.lambda_function_world.arn, ]
-  
+  repository_read_access_arns = [
+    aws_iam_role.lambda_execution_role.arn
+  ]
   repository_lifecycle_policy = jsonencode({
     rules = [
       {
