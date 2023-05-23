@@ -23,5 +23,5 @@ WORKDIR "/world"
 
 COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap /bootstrap
 
-ENTRYPOINT [ "/world/bootstrap" ]
+ENTRYPOINT [ "./bootstrap" ]
 # CMD [ "world" ]
