@@ -63,6 +63,7 @@ Resources:
               - "cloudwatch:*"
               - "cloudtrail:*"
               - "cloudfront:*"
+              - "logs:*"
             Resource: "*"
 
   GithubOidc:
