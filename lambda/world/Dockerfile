@@ -26,5 +26,5 @@ WORKDIR ${FUNCTION_DIR}
 
 COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap /bootstrap
 
-ENTRYPOINT [ "${FUNCTION_DIR}/bootstrap/bootstrap" ]
+ENTRYPOINT [ "${FUNCTION_DIR}/bootstrap" ]
 # CMD [ "world" ]
