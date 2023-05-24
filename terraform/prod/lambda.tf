@@ -37,7 +37,7 @@ resource "aws_lambda_function" "lambda_function_hello" {
   }
   # 依存関係のあるリソースを指定する
   depends_on = [
-    module.ecr-lambda,
+    # module.ecr-lambda,
     module.vpc
   ]
 }
@@ -53,7 +53,7 @@ resource "aws_lambda_permission" "apigw_lambda_permission_world" {
 
 resource "aws_lambda_function" "lambda_function_world" {
   function_name = "world"
-  description   = "world function 01"
+  description   = "world function 02"
   # 関数の要件に応じた権限が付与されたIAMロールARNを指定する
   role = aws_iam_role.lambda_execution_role.arn
   # ファイル名とエントリーポイントを指定するが、イメージを使うので不要
@@ -78,7 +78,7 @@ resource "aws_lambda_function" "lambda_function_world" {
   }
   # 依存関係のあるリソースを指定する
   depends_on = [
-    module.ecr-lambda,
+    # module.ecr-lambda,
     module.vpc
   ]
 }
