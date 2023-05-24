@@ -53,7 +53,7 @@ resource "aws_lambda_permission" "apigw_lambda_permission_world" {
 
 resource "aws_lambda_function" "lambda_function_world" {
   function_name = "world"
-  description   = "world function 02"
+  description   = "world function 03"
   # 関数の要件に応じた権限が付与されたIAMロールARNを指定する
   role = aws_iam_role.lambda_execution_role.arn
   # ファイル名とエントリーポイントを指定するが、イメージを使うので不要
