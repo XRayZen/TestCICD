@@ -33,10 +33,12 @@ RUN rm -rf /usr/src/hello/target/release
 # 以下サンプルのコード 上手くいかなかったら置き換える
 FROM public.ecr.aws/lambda/provided:al2
 
-COPY --from=builder /usr/comp/hello ${LAMBDA_RUNTIME_DIR}/bootstrap
-# hello/bootstrap
-# 
-CMD [ "lambda-handler" ]
+# Set the working directory
+WORKDIR /hello
+
+COPY --from=builder /usr/comp/hello/bootstrap bootstrap
+
+ENTRYPOINT [ "./bootstrap" ]
 
 # Copy the Lambda function binary to the container
 # COPY --from=builder /usr/src/hello/target/lambda/hello /var/task/
