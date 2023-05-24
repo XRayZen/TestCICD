@@ -48,11 +48,11 @@ data "aws_iam_policy_document" "lambda_access_policy" {
       "ec2:DescribeSecurityGroups",
       "ec2:DescribeVpcs",
       # ECRを読み込みを許可するポリシー
-      # "ecr:GetAuthorizationToken",
-      # "ecr:BatchCheckLayerAvailability",
-      # "ecr:GetDownloadUrlForLayer",
-      # "ecr:BatchGetImage",
-      # "ecr:DescribeRepositories",
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "ecr:DescribeRepositories",
       # DynamoDB用ポリシー
       "dynamodb:BatchGetItem",
       "dynamodb:GetItem",
