@@ -16,11 +16,6 @@ resource "aws_lambda_function" "lambda_func_" {
   environment {
     variables = var.environment_variables
   }
-  lifecycle {
-    ignore_changes = [
-      "environment_variables"
-    ]
-  }
 }
 
 

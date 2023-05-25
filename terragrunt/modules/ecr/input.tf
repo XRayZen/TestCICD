@@ -1,16 +1,12 @@
 
 variable "project_name" {
     type = string
-    description = "(optional) describe your variable"
+    description = "project name"
 }
 
 variable "repository_name" {
     type = string
-    description = "(optional) describe your variable"
+    description = "repository name"
 }
 
-variable "read_write_access_iam_role_arns" {
-    type = string
-    description = "(optional) describe your variable"
-}
 

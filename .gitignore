@@ -6,3 +6,4 @@ client/api_client/target
 .DS_Store
 .terraform.lock.hcl
 grpc_url.txt
+*.tfstate

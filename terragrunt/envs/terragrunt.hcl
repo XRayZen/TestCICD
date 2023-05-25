@@ -7,12 +7,12 @@ remote_state {
   }
   generate = {
     path      = "backend.tf"
-    if_exists = "overwrite_terragrunt"
+    if_exists = "overwrite"
   }
 }
 
 generate "provider" {
-  path      = "provider.tf"
+  path      = "_provider.tf"
   if_exists = "overwrite_terragrunt"
   contents  = <<EOF
 terraform {
