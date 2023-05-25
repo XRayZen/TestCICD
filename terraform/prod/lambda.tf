@@ -41,7 +41,7 @@ resource "aws_lambda_function" "lambda_function_hello" {
     module.vpc
   ]
 }
-# 外部ソース（EventBridge Rule、SNS、S3など）にLambda関数へのアクセス権限を付与する。
+# 外部ソース（EventBridge Rule、SNS、S3など）にLambda関数へのアクセス起動権限を付与する。
 resource "aws_lambda_permission" "apigw_lambda_permission_world" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
@@ -70,7 +70,7 @@ resource "aws_lambda_function" "lambda_function_world" {
       TABLE_NAME = aws_dynamodb_table.prime_ministers_table.name
     }
   }
-  # AWSのリソースにアクセスするためにVPCを指定する
+  # AWSのリソースと外部にアクセスするためのVPCを指定する
   vpc_config {
     #両方とも指定しないとVPC設定はされていないと判断される
     subnet_ids         = [data.aws_subnet.public[0].id]
