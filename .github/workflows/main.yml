@@ -8,6 +8,8 @@ on:
 env:
   AWS_REGION: us-east-1
   TF_VAR_environment: prod
+  TG_VERSION: 0.45.16
+  TG_WORK_DIR: './terragrunt/envs/'
   AWS_Role_ARN: secrets.IAM_ROLE_ARN
   REPO_ECR_NAME: test-cicd-repo
 
@@ -42,6 +44,12 @@ jobs:
       with:
         role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
         aws-region: ${{ env.AWS_REGION }}
+    
+    # Rustのテストは後で実装する
+    # - name: Rust test
+    #   run: |
+    #     cd lambda/${{ matrix.function }}
+    #     cargo test
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -73,19 +81,46 @@ jobs:
         role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - name: Set up Terraform
+    # Setup Terraform
+    - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
+    # Setup Terragrunt
+    - name: Setup Terragrunt
+      run: |
+        sudo wget -q -O /bin/terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64"
+        sudo chmod +x /bin/terragrunt
+        terragrunt --version
 
-    - name: Initialize Terraform
-      run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} init 
+    - name: Terragrunt init
+      working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+      run: terragrunt run-all init
 
-    - name: Validate Terraform
-      run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} validate
+    - name: Check terraform fmt
+      working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+      run: terraform fmt -check -recursive
 
-    - name: Plan Terraform
-      run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} plan -out=tfplan 
+    - name: Terragrunt validate
+      working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+      run: terragrunt run-all validate
 
-    - name: Apply Terraform
-      run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} apply -auto-approve -input=false tfplan
+    - name: Terragrunt plan
+      working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+      run: |
+          terragrunt run-all plan --terragrunt-tfpath $GITHUB_WORKSPACE/.github/scripts/tfwrapper.sh
+    
+    # - name: Set up Terraform
+    #   uses: hashicorp/setup-terraform@v1
+
+    # - name: Initialize Terraform
+    #   run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} init 
+
+    # - name: Validate Terraform
+    #   run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} validate
+
+    # - name: Plan Terraform
+    #   run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} plan -out=tfplan 
+
+    # - name: Apply Terraform
+    #   run: terraform -chdir=terraform/${{ env.TF_VAR_environment }} apply -auto-approve -input=false tfplan
 
 

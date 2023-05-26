@@ -4,20 +4,20 @@ variable "lambda_function_name" {
     description = "lambda function name"
 }
 
-variable "lambda_runtime" {
-    type = string
-    description = "lambda runtime"
-}
-
 variable "lambda_function_description" {
     type = string
     description = "lambda function description"
 }
 
-variable "image_url" {
+variable "repo_url" {
     type = string
-    # タグが付いているイメージURLを指定する
-    description = "image url with tag (e.g. xxx.dkr.ecr.region.amazonaws.com/test-cicd-repo:tag)"
+    description = "ecr url"
+}
+
+variable "image_tag" {
+    type = string
+    # タグを指定する
+    description = "image tag (e.g. latest)"
 }
 
 variable "memory_size" {
@@ -30,20 +30,25 @@ variable "timeout" {
     description = "timeout"
 }
 
-variable "environment_variables" {
-    type = map(string)
-    description = "environment variables"
+variable "managed_policy_arns" {
+    type = set(string)
+    description = "managed policy arns"
 }
+# VPCを設定するまでは使わない
+# variable "environment_variables" {
+#     type = map(string)
+#     description = "environment variables"
+# }
 
-variable "subnet_ids" {
-    type = list(string)
-    description = "subnet ids"
-}
+# variable "subnet_ids" {
+#     type = list(string)
+#     description = "subnet ids"
+# }
 
-variable "security_group_ids" {
-    type = list(string)
-    description = "security group ids"
-}
+# variable "security_group_ids" {
+#     type = list(string)
+#     description = "security group ids"
+# }
 
 
 

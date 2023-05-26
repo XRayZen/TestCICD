@@ -7,3 +7,6 @@ client/api_client/target
 .terraform.lock.hcl
 grpc_url.txt
 *.tfstate
+_provider.tf
+.terragrunt
+.terragrunt-cache
