@@ -14,7 +14,7 @@ dependency "ecr" {
     config_path = "../ecr"
     
     mock_outputs = {
-        ecr_repository_url = "123456789012.dkr.ecr.ap-northeast-1.amazonaws.com/world"
+        ecr_repository_url = "123456789012.dkr.ecr.ap-northeast-1.amazonaws.com"
     }
 }
 
