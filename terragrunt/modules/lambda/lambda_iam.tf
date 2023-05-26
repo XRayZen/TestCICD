@@ -1,7 +1,7 @@
 
 resource "aws_iam_role" "lambda_role" {
-  name               = "${var.lambda_function_name}-role"
-  assume_role_policy = data.aws_iam_policy_document.lambda_role_policy.json
+  name                = "${var.lambda_function_name}-role"
+  assume_role_policy  = data.aws_iam_policy_document.lambda_role_policy.json
   managed_policy_arns = var.managed_policy_arns
 }
 

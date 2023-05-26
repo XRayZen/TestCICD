@@ -21,7 +21,7 @@ dependency "ecr" {
 
 inputs = {
     lambda_function_name = "world"
-    lambda_function_description = "world lambda function"
+    lambda_function_description = "world lambda function 01"
     repo_url= dependency.ecr.outputs.ecr_repository_url
     image_tag= "world"
     memory_size = 128
