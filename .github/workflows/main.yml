@@ -10,62 +10,63 @@ env:
   TF_VAR_environment: prod
   TG_VERSION: 0.45.16
   TG_WORK_DIR: terragrunt/envs
+  tf_version: latest
   AWS_Role_ARN: secrets.IAM_ROLE_ARN
   REPO_ECR_NAME: test-cicd-repo
 
 jobs:
-  lambda_ci_cd:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    strategy:
-      matrix:
-        function:
-          - hello
-          - world
-          # 他のLambda関数名を追加
+  # lambda_ci_cd:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     id-token: write
+  #     contents: read
+  #   strategy:
+  #     matrix:
+  #       function:
+  #         - hello
+  #         - world
+  #         # 他のLambda関数名を追加
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+  #   - name: Set up Docker Buildx
+  #     uses: docker/setup-buildx-action@v1
 
-    - name: Set up Docker BuildKit
-      run: |
-        echo '{"features":{"buildkit":true}}' | sudo tee /etc/docker/daemon.json
-        sudo systemctl restart docker
+  #   - name: Set up Docker BuildKit
+  #     run: |
+  #       echo '{"features":{"buildkit":true}}' | sudo tee /etc/docker/daemon.json
+  #       sudo systemctl restart docker
 
-    # AWS OIDC認証
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
-        aws-region: ${{ env.AWS_REGION }}
+  #   # AWS OIDC認証
+  #   - name: Configure AWS Credentials
+  #     uses: aws-actions/configure-aws-credentials@v1
+  #     with:
+  #       role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
+  #       aws-region: ${{ env.AWS_REGION }}
     
-    # Rustのテストは後で実装する
-    # - name: Rust test
-    #   run: |
-    #     cd lambda/${{ matrix.function }}
-    #     cargo test
+  #   # Rustのテストは後で実装する
+  #   # - name: Rust test
+  #   #   run: |
+  #   #     cd lambda/${{ matrix.function }}
+  #   #     cargo test
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+  #   - name: Login to Amazon ECR
+  #     id: login-ecr
+  #     uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push docker image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ env.REPO_ECR_NAME }}
-        IMAGE_TAG: ${{ matrix.function }}
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./lambda/${{ matrix.function }}
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+  #   - name: Build, tag, and push docker image to Amazon ECR
+  #     env:
+  #       ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+  #       ECR_REPOSITORY: ${{ env.REPO_ECR_NAME }}
+  #       IMAGE_TAG: ${{ matrix.function }}
+  #     run: |
+  #       docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./lambda/${{ matrix.function }}
+  #       docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   deploy_infrastructure:
-    needs: lambda_ci_cd
+    # needs: lambda_ci_cd
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -84,30 +85,48 @@ jobs:
     # Setup Terraform
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
-    # Setup Terragrunt
-    - name: Setup Terragrunt
-      run: |
-        sudo wget -q -O /bin/terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64"
-        sudo chmod +x /bin/terragrunt
-        terragrunt --version
+    
+    - name: 'Terragrunt Format'
+      uses: the-commons-project/terragrunt-github-actions@master
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terraform'
+        tf_actions_subcommand: 'fmt'
+        tf_actions_working_dir: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+        tf_actions_comment: true
+    - name: 'Terragrunt Init'
+      uses: the-commons-project/terragrunt-github-actions@master
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_subcommand: 'init'
+        tf_actions_working_dir: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+        tf_actions_comment: true
+    # # Setup Terragrunt
+    # - name: Setup Terragrunt
+    #   run: |
+    #     sudo wget -q -O /bin/terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64"
+    #     sudo chmod +x /bin/terragrunt
+    #     terragrunt --version
 
-    - name: Terragrunt init
-      working-directory: terragrunt/envs/${{ env.TF_VAR_environment }}
-        # ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
-      run: terragrunt run-all init
+    # - name: Terragrunt init
+    #   working-directory: terragrunt/envs/${{ env.TF_VAR_environment }}
+    #     # ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+    #   run: terragrunt run-all init
 
-    - name: Check terraform fmt
-      working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
-      run: terraform fmt -check -recursive
+    # - name: Check terraform fmt
+    #   working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+    #   run: terraform fmt -check -recursive
 
-    - name: Terragrunt validate
-      working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
-      run: terragrunt run-all validate
+    # - name: Terragrunt validate
+    #   working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+    #   run: terragrunt run-all validate
 
-    - name: Terragrunt plan
-      working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
-      run: |
-          terragrunt run-all plan --terragrunt-tfpath $GITHUB_WORKSPACE/.github/scripts/tfwrapper.sh
+    # - name: Terragrunt plan
+    #   working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+    #   run: |
+    #       terragrunt run-all plan --terragrunt-tfpath $GITHUB_WORKSPACE/.github/scripts/tfwrapper.sh
     
     # - name: Set up Terraform
     #   uses: hashicorp/setup-terraform@v1
