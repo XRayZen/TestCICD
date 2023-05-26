@@ -92,7 +92,7 @@ jobs:
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
-        # tf_actions_binary: 'terragrunt'
+        tf_actions_binary: 'terragrunt'
         tf_actions_subcommand: 'run-all fmt'
         tf_actions_working_dir: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
         tf_actions_comment: true
