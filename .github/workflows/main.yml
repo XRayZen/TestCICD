@@ -96,20 +96,20 @@ jobs:
 
     - name: Terragrunt init
       working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
-      run: terragrunt run-all init
+      run: terragrunt run-all init --terragrunt-non-interactive
 
     - name: Check terraform fmt
       working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
-      run: terraform fmt -check -recursive
+      run: terraform fmt -check -recursive --terragrunt-non-interactive
 
     - name: Terragrunt validate
       working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
-      run: terragrunt run-all validate
+      run: terragrunt run-all validate --terragrunt-non-interactive
 
     - name: Terragrunt plan
       working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
       run: |
-          terragrunt run-all plan --terragrunt-tfpath $GITHUB_WORKSPACE/.github/scripts/tfwrapper.sh
+          terragrunt run-all plan
     
     # - name: Set up Terraform
     #   uses: hashicorp/setup-terraform@v1
