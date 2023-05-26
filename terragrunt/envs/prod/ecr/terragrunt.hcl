@@ -8,7 +8,7 @@ locals{
 }
 
 terraform{
-    source = "//modules/ecr"
+    source = "${dirname(find_in_parent_folders())}//modules/ecr"
     # "../../../modules/ecr"
 }
 
