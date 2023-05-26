@@ -8,7 +8,8 @@ locals{
 }
 
 terraform{
-    source = "../../../modules/ecr"
+    source = "//modules/ecr"
+    # "../../../modules/ecr"
 }
 
 inputs ={
