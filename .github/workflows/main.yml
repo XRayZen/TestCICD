@@ -101,7 +101,9 @@ jobs:
 
     - name: Check terraform fmt
       working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
-      run: terraform fmt -check -recursive
+      run: |
+        cd ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+        terraform fmt -check -recursive
 
     - name: Terragrunt validate
       working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
