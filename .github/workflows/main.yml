@@ -88,7 +88,7 @@ jobs:
     - name: Setup Terragrunt
       uses: autero1/action-terragrunt@v1.1.0
       with:
-        terragrunt_version: TG_VERSION
+        terragrunt_version: latest
           # 0.37.1
 
     - name: Interact with Terragrunt
