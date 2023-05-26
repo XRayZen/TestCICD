@@ -93,9 +93,11 @@ jobs:
         terragrunt --version
 
     - name: Terragrunt init
-      working-directory: terragrunt/envs/${{ env.TF_VAR_environment }}
-        # ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
-      run: terragrunt run-all init
+      # working-directory: terragrunt/envs/${{ env.TF_VAR_environment }}
+      #   # ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+      run: |
+        cd ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+        terragrunt run-all init
 
     - name: Check terraform fmt
       working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
