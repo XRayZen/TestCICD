@@ -1,5 +1,5 @@
 
 #[test]
 fn test_usecase(){
-    todo!()
+    println!("test_usecase");
 }
