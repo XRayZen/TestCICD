@@ -1,5 +1,7 @@
 # RustでAWS Lambdaを作成しCI/CDパイプラインを構築する
+- 素のテラフォームはクソなのでTerragruntを使う
 
+## AWSとOIDCするためにIAMロールを作成する
 ```bash
 aws cloudformation create-stack --stack-name TestCICDFix1 --template-body file://iam_role/iam-role.yaml --profile terraform-user --capabilities CAPABILITY_NAMED_IAM
 ```
@@ -15,7 +17,7 @@ aws cloudformation describe-stacks --stack-name TestCICDFix1 --query 'Stacks[0].
 aws cloudformation delete-stack --stack-name TestCICDFix1 --profile AWSプロファイル名
 ```
 
-
+## cargo-aws-lambda で　 Dockerfile を作成する
 `cargo-aws-lambda`は、AWS Lambda関数をビルドするためのRustツールチェーンです。このツールチェーンを使用すると、AWS Lambda関数をビルドするために必要なすべての依存関係を含む単一のバイナリをビルドできます。このバイナリは、AWS Lambdaのランタイムに直接アップロードできます。
 
 `cargo-aws-lambda`を使用する場合、Dockerコンテナにカスタムランタイムを含める必要はありません。AWS Lambdaのランタイムは、AWSが提供するものを使用するため、ランタイムの準備は不要です。`cargo-aws-lambda`は、AWS Lambda関数をビルドするために必要なすべての依存関係を含む単一のバイナリをビルドするため、Dockerコンテナを使用する必要もありません。
