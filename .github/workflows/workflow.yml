@@ -15,7 +15,7 @@ env:
 
 jobs:
   lambda_ci_cd:
-    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.modified, 'lambda') }}
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.modified, 'lambda') }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
