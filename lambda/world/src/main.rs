@@ -7,7 +7,7 @@ use lambda_http::{
 /// 以下のURLにコード例があります：
 /// - https://github.com/awslabs/aws-lambda-rust-runtime/tree/main/examples
 async fn function_handler(_event: Request) -> Result<Response<Body>, Error> {
-    let message = format!("Hello AWS this is an Rust to AWS Lambda HTTP request");
+    let message = format!("Hello! this is an Rust to AWS Lambda HTTP request");
     // let ddd= ser::to_string(&message).unwrap();
     // Return something that implements IntoResponse.
     // It will be serialized to the right response event automatically by the runtime
