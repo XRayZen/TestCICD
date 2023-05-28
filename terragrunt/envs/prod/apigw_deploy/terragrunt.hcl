@@ -13,6 +13,11 @@ terraform{
 # deployはrestとmethod二つのリソースに依存する
 dependency "rest" {
     config_path = "../apigw_rest"
+
+    mock_outputs = {
+        api_gw_rest_api_id = "mock_rest_api_id"
+        api_gw_resource_path = "mock_resource_path"
+    }
 }
 
 dependency "method_world" {

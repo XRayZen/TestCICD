@@ -13,10 +13,21 @@ terraform{
 
 dependency "lambda_world" {
     config_path = "../lambda_world"
+
+    mock_outputs = {
+        lambda_function_invoke_arn = "arn:aws:lambda:ap-northeast-1:123456789012:function:lambda_world:1"
+        lambda_function_name = "lambda_world"
+    }
 }
 
 dependency "apigw_rest"{
     config_path = "../apigw_rest"
+
+    mock_outputs = {
+        api_gw_rest_api_id = "1234567890"
+        api_gw_root_resource_id = "1234567890"
+        rest_api_execution_arn = "arn:aws:execute-api:ap-northeast-1:123456789012:1234567890/*/*/*"
+    }
 }
 
 inputs ={
