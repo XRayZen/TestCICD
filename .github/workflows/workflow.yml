@@ -16,8 +16,9 @@ env:
 jobs:
   lambda_ci_cd:
     # lambdaディレクトリに変更があった場合は実行
-    if: ${{contains(github.event.head_commit.modified, 'lambda') }}
+    # コミットメッセージにlambdaが含まれている場合は実行
     runs-on: ubuntu-latest
+    if: ${{ contains(github.event.head_commit.modified, 'lambda/') || contains(github.event.head_commit.message, 'lambda') }}
     permissions:
       id-token: write
       contents: read
@@ -82,7 +83,7 @@ jobs:
 
   deploy_infrastructure:
     # terragruntディレクトリの変更があった場合に実行
-    if: ${{ contains(github.event.head_commit.modified, 'terragrunt') }}
+    if: ${{ contains(github.event.head_commit.modified, 'terragrunt/') }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
