@@ -16,12 +16,13 @@ resource "aws_api_gateway_method_settings" "api_gw_method_settings" {
     aws_api_gateway_stage.api_stage,
   ]
 }
+
 # ApiGatewayにクラウドウォッチのロールARNを追加する
 resource "aws_api_gateway_account" "api_gw_account" {
-  cloudwatch_role_arn = aws_iam_role.cloudwatch.arn
+  cloudwatch_role_arn = aws_iam_role.api_gw_cloudwatch_iam_role.arn
 }
 
-data "aws_iam_policy_document" "assume_role" {
+data "aws_iam_policy_document" "api_gw_assume_role" {
   statement {
     effect = "Allow"
 
@@ -34,35 +35,10 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
-resource "aws_iam_role" "cloudwatch" {
+resource "aws_iam_role" "api_gw_cloudwatch_iam_role" {
   name               = "api_gateway_cloudwatch_global"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs",
+  ]
 }
-
-data "aws_iam_policy_document" "cloudwatch" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:DescribeLogGroups",
-      "logs:DescribeLogStreams",
-      "logs:PutLogEvents",
-      "logs:GetLogEvents",
-      "logs:FilterLogEvents",
-    ]
-
-    resources = ["*"]
-  }
-}
-resource "aws_iam_role_policy" "cloudwatch" {
-  name   = "default-API-Gateway-Execution-Logs"
-  role   = aws_iam_role.cloudwatch.id
-  policy = data.aws_iam_policy_document.cloudwatch.json
-}
-
-
-
-
-
