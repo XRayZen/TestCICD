@@ -18,7 +18,7 @@ jobs:
     # lambdaディレクトリに変更があった場合は実行
     # コミットメッセージにlambdaが含まれている場合は実行
     runs-on: ubuntu-latest
-    if: ${{ contains(github.event.head_commit.modified, 'lambda/') || contains(github.event.head_commit.message, 'lambda') }}
+    if: ${{ contains(github.event.head_commit.modified, 'lambda/') }}
     permissions:
       id-token: write
       contents: read
