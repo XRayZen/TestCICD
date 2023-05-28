@@ -1,5 +1,5 @@
 # RustでAWS Lambdaを作成しCI/CDパイプラインを構築する
-- 素のテラフォームはクソなのでTerragruntを使う
+- IaCのDRYをする為にTerragruntを使う
 
 ## AWSとOIDCするためにIAMロールを作成する
 ```bash
