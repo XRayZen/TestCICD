@@ -15,6 +15,7 @@ env:
 
 jobs:
   lambda_ci_cd:
+    if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.modified, 'lambda') }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -29,15 +30,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    
-      # Lambda関数のコードに変更がなければこのジョブをスキップ
-    - name: Check code diff
-      id: check_code_diff
-      run: |
-        git fetch --no-tags --prune --depth=1 origin +refs/heads/main:refs/remotes/origin/main
-        git diff --name-only origin/main | grep -qE 'lambda/${{ matrix.function }}'
-        echo ::set-output name=diff::$(echo $?)
-      continue-on-error: true
 
     # ディストレスコンテナを使うために必要
     - name: Set up Docker Buildx
