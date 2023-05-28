@@ -54,6 +54,13 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
+      # 関数名のタグがあるイメージをECRから削除
+    - name: Delete old docker image
+      run: |
+        aws ecr batch-delete-image \
+          --repository-name ${{ env.REPO_ECR_NAME }} \
+          --image-ids imageTag=${{ matrix.function }} || true
+
     - name: Build, tag, and push docker image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
