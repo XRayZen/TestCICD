@@ -8,6 +8,10 @@ resource "aws_api_gateway_method_settings" "api_gw_method_settings" {
     metrics_enabled = true
     logging_level   = "INFO"
   }
+  # このリソースはステージ後に実行する必要がある
+  depends_on = [
+    aws_api_gateway_stage.api_stage,
+  ]
 }
 
 
