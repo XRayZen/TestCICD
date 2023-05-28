@@ -1,5 +1,5 @@
 locals{
-    env = "dev"
+    env = "prod"
     project_name = "test-cicd"
 }
 
