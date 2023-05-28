@@ -47,9 +47,8 @@ jobs:
     
     # Rustのテストは後で実装する
     # - name: Rust test
-    #   run: |
-    #     cd lambda/${{ matrix.function }}
-    #     cargo test
+    #   working-directory: ./lambda/${{ matrix.function }}
+    #   run: cargo test
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -81,14 +80,12 @@ jobs:
         role-to-assume: ${{ secrets.IAM_ROLE_ARN }}
         aws-region: ${{ env.AWS_REGION }}
 
-    # Setup Terraform
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
       with:
         # Terragruntを使うからfalseにしておく必要がある
         terraform_wrapper: false
 
-      # Setup Terragrunt
     - name: Setup Terragrunt
       run: |
         sudo wget -q -O /bin/terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v${TG_VERSION}/terragrunt_linux_amd64"
@@ -102,6 +99,7 @@ jobs:
     - name: Check terraform fmt
       working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
       run: terraform fmt -check -recursive -diff
+
     - name: Terragrunt validate
       working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
       run: terragrunt run-all validate --terragrunt-non-interactive
@@ -110,6 +108,7 @@ jobs:
       working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
       run: |
           terragrunt run-all plan
+
     - name: Terragrunt apply
       working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
       run: |

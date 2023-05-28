@@ -1,8 +1,8 @@
 
 
 resource "aws_api_gateway_rest_api" "api_gw_rest_api" {
-  name        = "api_gw_rest"
-  description = "Example API Gateway with gRPC and Lambda"
+  name        = "${var.project_name}_rest_api"
+  description = var.api_gw_description
   # APIエンドポイント設定を定義する
   endpoint_configuration {
     #  CloudFrontを使用する場合は、REGIONALを指定する
@@ -42,7 +42,7 @@ resource "aws_api_gateway_deployment" "api_gw_deploy" {
 }
 
 resource "aws_api_gateway_usage_plan" "api_usage_plan" {
-    name = "api_usage_plan"
+    name = "${var.project_name}_rest_api_usage_plan"
     description = "api_usage_plan"
     api_stages {
         api_id = aws_api_gateway_rest_api.api_gw_rest_api.id

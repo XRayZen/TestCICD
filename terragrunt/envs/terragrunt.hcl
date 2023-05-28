@@ -8,7 +8,7 @@ remote_state {
     dynamodb_table = "terraform-state-lock"
   }
   generate = {
-    path      = "backend.tf"
+    path      = "_backend.tf"
     if_exists = "overwrite"
   }
 }
