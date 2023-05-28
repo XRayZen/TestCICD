@@ -15,10 +15,9 @@ env:
 
 jobs:
   lambda_ci_cd:
-    # lambdaディレクトリに変更があった場合は実行
     # コミットメッセージにlambdaが含まれている場合は実行
     runs-on: ubuntu-latest
-    if: ${{ contains(github.event.head_commit.modified, 'lambda/') }}
+    if: ${{ contains(github.event.head_commit.message, 'lambda') }}
     permissions:
       id-token: write
       contents: read
@@ -82,8 +81,8 @@ jobs:
           --image-uri ${{ steps.login-ecr.outputs.registry }}/${{ env.REPO_ECR_NAME }}:${{ matrix.function }}
 
   deploy_infrastructure:
-    # terragruntディレクトリの変更があった場合に実行
-    if: ${{ contains(github.event.head_commit.modified, 'terragrunt/') }}
+        # コミットメッセージにinfraが含まれている場合は実行
+    if: ${{ contains(github.event.head_commit.message, 'infra') }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
