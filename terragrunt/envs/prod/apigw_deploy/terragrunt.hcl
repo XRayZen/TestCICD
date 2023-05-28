@@ -29,7 +29,7 @@ dependency "method_world" {
 
 inputs ={
     api_gw_rest_api_id = dependency.rest.outputs.api_gw_rest_api_id
-    api_gw_resource_path = dependency.rest.outputs.method_world.api_gw_resource_path
+    api_gw_resource_path = dependency.method_world.outputs.api_gw_resource_path
     # パラメータ
     project_name = local.env.locals.project_name
     project_stage = local.env.locals.env
