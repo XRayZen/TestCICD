@@ -69,6 +69,13 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./lambda/${{ matrix.function }}
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    
+      # Lambda関数を更新
+    - name: Update Lambda function
+      run: |
+        aws lambda update-function-code \
+          --function-name ${{ matrix.function }} \
+          --image-uri ${{ steps.login-ecr.outputs.registry }}/${{ env.REPO_ECR_NAME }}:${{ matrix.function }}
 
   deploy_infrastructure:
     needs: lambda_ci_cd
