@@ -36,7 +36,7 @@ data "aws_iam_policy_document" "api_gw_assume_role" {
 }
 
 resource "aws_iam_role" "api_gw_cloudwatch_iam_role" {
-  name               = "api_gateway_cloudwatch_global"
+  name               = "api_gateway_cloudwatch_global_iam_role"
   assume_role_policy = data.aws_iam_policy_document.api_gw_assume_role.json
   managed_policy_arns = [
     "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs",
