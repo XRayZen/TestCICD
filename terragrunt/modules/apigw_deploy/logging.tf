@@ -1,7 +1,7 @@
 
 resource "aws_api_gateway_method_settings" "api_gw_method_settings" {
   rest_api_id = var.api_gw_rest_api_id
-  stage_name  = var.project_stage
+  stage_name  = aws_api_gateway_stage.api_stage.stage_name
   method_path = var.api_gw_resource_path
 
   settings {
