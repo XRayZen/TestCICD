@@ -80,7 +80,8 @@ jobs:
           --image-uri ${{ steps.login-ecr.outputs.registry }}/${{ env.REPO_ECR_NAME }}:${{ matrix.function }}
 
   deploy_infrastructure:
-    needs: lambda_ci_cd
+    # terragruntディレクトリの変更があった場合に実行
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.modified, 'terragrunt') }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
