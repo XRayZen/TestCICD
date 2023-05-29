@@ -5,6 +5,7 @@ resource "aws_lambda_function" "lambda_func_" {
   memory_size   = var.memory_size
   timeout       = var.timeout
   role          = aws_iam_role.lambda_role.arn
+  architectures = [var.lambda_function_architecture]
 
   package_type = "Image"
   image_uri    = "${var.repo_url}:${var.image_tag}"

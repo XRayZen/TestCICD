@@ -35,7 +35,7 @@ resource "aws_cloudfront_distribution" "cf_dist" {
   }
 
   ordered_cache_behavior {
-    path_pattern     = "/${var.project_stage}/*"
+    path_pattern     = "/*"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "apigw_root"
@@ -71,7 +71,7 @@ resource "aws_cloudfront_distribution" "cf_dist" {
     ManagedBy = "Terraform"
   }
 
-  price_class = "PriceClass_All" # すべての価格クラスのエッジロケーションを使用する
+  price_class = var.price_class # すべての価格クラスのエッジロケーションを使用する
 
   # アクセスログをS3に保存する
   logging_config {

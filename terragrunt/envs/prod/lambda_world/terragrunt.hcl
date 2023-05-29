@@ -26,6 +26,8 @@ inputs = {
     image_tag= "world"
     memory_size = 128
     timeout = 3
+    # ARMを使用する場合はARM64を指定
+    lambda_function_architecture = "arm64"
     managed_policy_arns = [
     # Lambda関数がCloudWatch Logsにログを書き込むための最低限の権限を提供します。
     "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",

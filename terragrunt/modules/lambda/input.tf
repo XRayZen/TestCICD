@@ -9,6 +9,12 @@ variable "lambda_function_description" {
     description = "lambda function description"
 }
 
+variable "lambda_function_architecture" {
+    type = string
+    description = "lambda function architecture"
+    default = "x86_64"
+}
+
 variable "repo_url" {
     type = string
     description = "ecr url"

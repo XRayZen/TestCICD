@@ -22,7 +22,11 @@ variable "project_name" {
 
 }
 
-
+variable "price_class" {
+  type        = string
+  description = "CloudFront価格クラス"
+  default = "PriceClass_200"
+}
 
 
 

@@ -12,8 +12,12 @@ ADD src src
 # Docker Buildkit required
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/home/root/app/target \
-    rustup target add x86_64-unknown-linux-musl && \
-    cargo build --release --target x86_64-unknown-linux-musl
+    # x86用
+    # rustup target add x86_64-unknown-linux-musl && \
+    # cargo build --release --target x86_64-unknown-linux-musl
+    # ARM用
+    rustup target add aarch64-unknown-linux-musl && \
+    cargo build --release --target aarch64-unknown-linux-musl
 
 # copy artifacts to a clean image
 FROM gcr.io/distroless/static
@@ -21,6 +25,9 @@ FROM gcr.io/distroless/static
 # Set the working directory to function root directory
 WORKDIR "/world"
 
-COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap bootstrap
+# x86用
+# COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/bootstrap bootstrap
+# ARM用
+COPY --from=builder /build/target/aarch64-unknown-linux-musl/release/bootstrap bootstrap
 
 ENTRYPOINT [ "./bootstrap" ]
