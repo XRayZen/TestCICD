@@ -30,8 +30,9 @@ data "aws_iam_policy_document" "cloudfront_logging_bucket" {
 ###############################################
 resource "aws_s3_bucket" "cloudfront_logging" {
   bucket = "cloudfront-access-log-${var.origin_name}"
-  # policy        = data.aws_iam_policy_document.cloudfront_logging_bucket.json
+  policy        = data.aws_iam_policy_document.cloudfront_logging_bucket.json
   force_destroy = false
+  
 }
 
 # S3 Public Access Block
@@ -124,6 +125,13 @@ resource "aws_s3_bucket_policy" "log_bucket_policy" {
             "s3:x-amz-acl" = "bucket-owner-full-control"
           }
         }
+      },
+      {
+        Sid       = "PublicReadGetObject"
+        Effect    = "Allow"
+        Principal = { "*" = "*" }
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.cloudfront_logging.arn}/*"
       }
     ]
     }
