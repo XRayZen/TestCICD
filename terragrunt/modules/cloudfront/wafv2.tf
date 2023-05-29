@@ -1,19 +1,9 @@
 
-
-# Provider configuration
-provider "aws" {
-  alias = "virginia"
-  # CloudFrontを使う場合はAWSリソースのリージョンをus-east-1にする必要がある
-  region = var.aws_region
-}
-
 # WAF ACL
 resource "aws_wafv2_web_acl" "waf" {
   name        = "waf"
   scope       = "CLOUDFRONT"
   description = "waf"
-  # CloudFrontを使う場合はAWSリソースのリージョンをus-east-1(Region:Virginia)にする
-  provider = aws.virginia
 
   # 許可されたルール以外のリクエストをブロックする
   # CICDポートフォリオだから大胆にブロックできるがサービス運用だとできないだろう
