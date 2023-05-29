@@ -30,9 +30,9 @@ data "aws_iam_policy_document" "cloudfront_logging_bucket" {
 ###############################################
 resource "aws_s3_bucket" "cloudfront_logging" {
   bucket = "cloudfront-access-log-${var.origin_name}"
-  policy        = data.aws_iam_policy_document.cloudfront_logging_bucket.json
+  # policy        = data.aws_iam_policy_document.cloudfront_logging_bucket.json
   force_destroy = false
-  
+
 }
 
 # S3 Public Access Block
@@ -147,7 +147,7 @@ resource "aws_s3_bucket_ownership_controls" "log_bucket_ownership" {
 
 resource "aws_s3_bucket_acl" "log_bucket_acl" {
   bucket = aws_s3_bucket.cloudfront_logging.id
-  acl    = "private"
+  acl    = "log-delivery-write"
 
   depends_on = [
     aws_s3_bucket.cloudfront_logging,
