@@ -3,7 +3,7 @@
 # WebApi用のCloudFront
 resource "aws_cloudfront_distribution" "cf_dist" {
   enabled    = true
-  web_acl_id = aws_wafv2_web_acl.waf.arn
+  web_acl_id = var.waf_arn
   origin {
     domain_name = replace(var.rest_api_invoke_url, "/^https?://([^/]*).*/", "$1")
     origin_id   = "${var.origin_name}_root}"

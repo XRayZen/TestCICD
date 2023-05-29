@@ -5,6 +5,11 @@ variable "rest_api_invoke_url" {
   description = "API GatewayのURL"
 }
 
+variable "waf_arn" {
+  type        = string
+  description = "WAFのARN"
+}
+
 # パラメータ
 
 variable "project_stage" {
