@@ -26,30 +26,82 @@ resource "aws_wafv2_web_acl" "waf" {
         arn = aws_wafv2_rule_group.waf_rule_group.arn
       }
     }
-    # visibility_config はルールグループに定義済み
-    # Amazon CloudWatchのメトリクスとWebリクエストのサンプル収集を定義
-    # visibility_config {
-    #   cloudwatch_metrics_enabled = true
-    #   metric_name                = "waf_rg_reference_rg"
-    #   sampled_requests_enabled   = false
-    # }
   }
   # マネージドルールグループを参照する
+  # managed_rule_group_statementがACLにしか無いから見づらくなるが、ここに書く必要がある
   rule {
-    name     = aws_wafv2_rule_group.waf_managed_rule_group.name
-    priority = 2
-    # Webリクエストを上書きするかどうか
-    # マネージドルールを参照する時に必要
+    name     = "aws_managed_rules_common_rule_set"
+    priority = 20
     override_action {
-      # 上書きしない
       none {}
     }
     statement {
       # マネージドルールを参照する
       managed_rule_group_statement {
-        name        = aws_wafv2_rule_group.waf_managed_rule_group.name
+        name        = "AWSManagedRulesCommonRuleSet"
         vendor_name = "AWS"
       }
+    }
+    # Amazon CloudWatchのメトリクスとWebリクエストのサンプル収集を定義
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "waf_rg_common_rule_set"
+      sampled_requests_enabled   = false
+    }
+  }
+  rule {
+    name     = "aws_managed_rules_amazon_ip_reputation_list"
+    priority = 30
+    override_action {
+      none {}
+    }
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesAmazonIpReputationList"
+        vendor_name = "AWS"
+      }
+    }
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "waf_rg_amazon_ip_reputation_list"
+      sampled_requests_enabled   = false
+    }
+  }
+  rule {
+    name     = "aws_managed_rules_anonymous_ip_list"
+    priority = 40
+    override_action {
+      none {}
+    }
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesAnonymousIpList"
+        vendor_name = "AWS"
+      }
+    }
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "waf_rg_anonymous_ip_list"
+      sampled_requests_enabled   = false
+    }
+  }
+
+  rule {
+    name     = "aws_managed_rules_known_bad_inputs_rule_set"
+    priority = 50
+    override_action {
+      none {}
+    }
+    statement {
+      managed_rule_group_statement {
+        name        = "AWSManagedRulesKnownBadInputsRuleSet"
+        vendor_name = "AWS"
+      }
+    }
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "waf_rg_known_bad_inputs_rule_set"
+      sampled_requests_enabled   = false
     }
   }
 
@@ -59,7 +111,7 @@ resource "aws_wafv2_web_acl" "waf" {
     sampled_requests_enabled   = false
   }
   tags = {
-    Name = "${var.project_name}-${var.project_stage}-waf"
+    Name       = "${var.project_name}-${var.project_stage}-waf"
     Maneged_by = "Terraform"
   }
 
