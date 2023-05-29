@@ -19,8 +19,8 @@ data "aws_iam_policy_document" "cloudfront_logging_bucket" {
     ]
 
     resources = [
-      "arn:aws:s3:::cloudfront-access-log.${var.origin_name}",
-      "arn:aws:s3:::cloudfront-access-log.${var.origin_name}/*"
+      "arn:aws:s3:::cloudfront-access-log-${var.origin_name}",
+      "arn:aws:s3:::cloudfront-access-log-${var.origin_name}/*"
     ]
   }
 }
@@ -29,7 +29,7 @@ data "aws_iam_policy_document" "cloudfront_logging_bucket" {
 # CloudFrontのアクセスログ格納用バケット
 ###############################################
 resource "aws_s3_bucket" "cloudfront_logging" {
-  bucket = "cloudfront-access-log.${var.origin_name}"
+  bucket = "cloudfront-access-log-${var.origin_name}"
   # policy        = data.aws_iam_policy_document.cloudfront_logging_bucket.json
   force_destroy = false
 }
@@ -97,21 +97,21 @@ resource "aws_s3_bucket_policy" "log_bucket_policy" {
         Effect    = "Allow"
         Principal = { "*" = "*" }
         Action    = "s3:PutObject"
-        Resource  = "arn:aws:s3:::cloudfront-access-log.${var.origin_name}/*"
+        Resource  = "arn:aws:s3:::cloudfront-access-log-${var.origin_name}/*"
       },
       {
         Sid       = "AllowCloudFrontToGetLogs"
         Effect    = "Allow"
         Principal = { "*" = "*" }
         Action    = "s3:GetObject"
-        Resource  = "arn:aws:s3:::cloudfront-access-log.${var.origin_name}/*"
+        Resource  = "arn:aws:s3:::cloudfront-access-log-${var.origin_name}/*"
       },
       {
         Sid       = "AllowCloudFrontToDescribeBucket"
         Effect    = "Allow"
         Principal = { "*" = "*" }
         Action    = "s3:ListBucket"
-        Resource  = "arn:aws:s3:::cloudfront-access-log.${var.origin_name}"
+        Resource  = "arn:aws:s3:::cloudfront-access-log-${var.origin_name}"
       },
       {
         Sid       = "AddPerm"
