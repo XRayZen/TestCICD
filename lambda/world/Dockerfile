@@ -15,7 +15,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     # x86用
     # rustup target add x86_64-unknown-linux-musl && \
     # cargo build --release --target x86_64-unknown-linux-musl
-    # ARM用 ビルドするために必要なパッケージをインストールしビルド
+    # ARM用 ビルドするために必要なパッケージをインストールしビルド  
     apt update && \
     apt-get install -y gcc-multilib && \
     apt-get install -y libwayland-cursor0 && \
