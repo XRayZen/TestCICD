@@ -23,8 +23,8 @@ dependency "apigw_deploy"{
 
 inputs = {
     rest_api_invoke_url = dependency.apigw_deploy.outputs.rest_api_invoke_url
-    project_stage = local.env.env
-    project_name = local.env.project_name
+    project_stage = local.env.locals.env
+    project_name = local.env.locals.project_name
     origin_name = "api_gw"
     price_class = "PriceClass_200"
     compress= false
