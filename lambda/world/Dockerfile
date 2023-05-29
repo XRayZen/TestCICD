@@ -1,6 +1,10 @@
 ARG FUNCTION_DIR="/world"
 # https://hub.docker.com/layers/library/rust/1.69.0-buster/images/sha256-f86d4e0030192bb12b3464a0bf89fb972e0b653504a867c7d1078fd8677736be?context=explore
-FROM rust:1.69.0-buster as builder
+# FROM rust:1.69.0-buster as builder
+# ARM用ビルドイメージ
+# https://hub.docker.com/r/messense/rust-musl-cross/tags?page=1&ordering=last_updated
+# https://github.com/rust-cross/rust-musl-cross
+FROM messense/rust-musl-cross:aarch64-musl
 
 WORKDIR /build
 
@@ -16,10 +20,12 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     # rustup target add x86_64-unknown-linux-musl && \
     # cargo build --release --target x86_64-unknown-linux-musl
     # ARM用 ビルドするために必要なパッケージをインストールしビルド  
-    apt update && \
-    apt-get install -y gcc-multilib && \
-    apt-get install -y libwayland-cursor0 && \
-    apt-get install -y libwayland-dev && \
+    # apt update && \
+    # app-get install -y gcc && \
+    # apt-get install -y build-essential && \
+    # apt-get install -y gcc-multilib && \
+    # musl-libcをインストール
+    apt-get install -y musl-tools && \
     rustup target add aarch64-unknown-linux-musl && \
     cargo build --release --target aarch64-unknown-linux-musl
 
