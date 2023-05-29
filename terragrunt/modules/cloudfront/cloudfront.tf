@@ -4,7 +4,7 @@ resource "aws_cloudfront_distribution" "cf_dist" {
   web_acl_id = var.waf_arn
   origin {
     domain_name = replace(var.rest_api_invoke_url, "/^https?://([^/]*).*/", "$1")
-    origin_id   = "apigw_root"
+    origin_id   = "${var.origin_name}_root}"
 
     custom_origin_config {
       http_port              = 80
@@ -13,11 +13,11 @@ resource "aws_cloudfront_distribution" "cf_dist" {
       origin_ssl_protocols   = ["TLSv1", "TLSv1.1"]
     }
   }
-
+  
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "apigw_root"
+    target_origin_id = "${var.origin_name}_root}"
 
     forwarded_values {
       query_string = false
@@ -38,7 +38,7 @@ resource "aws_cloudfront_distribution" "cf_dist" {
     path_pattern     = "/*"
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "apigw_root"
+    target_origin_id = "${var.origin_name}_root}"
 
     forwarded_values {
       query_string = false

@@ -22,6 +22,11 @@ variable "project_name" {
 
 }
 
+variable "origin_name" {
+  type        = string
+  description = "CloudFrontのオリジン名"
+}
+
 variable "price_class" {
   type        = string
   description = "CloudFront価格クラス"

@@ -1,4 +1,5 @@
 {
+    // rootにCargo.tomlが無いからここで指定しておく
     "rust-analyzer.linkedProjects": [
         "./client/api_client/Cargo.toml",
         "./lambda/hello/Cargo.toml",

@@ -4,7 +4,7 @@
         - CloudFront->S3にアクセスログを保存
         - APIGWはクラウドウォッチにログを保存
 - CI/CDパイプラインにはGithub Actionsを使用する
-- クラウド構築にはIaCであるTerraformを使用する
+- クラウド構築にはIaCであるTerraform+Terragruntを使用する
     - 素のテラフォームだとステージごとにコードをコピペする必要があり（Not DRY・IaCコードの保守性が悪化）、実行順序にも気をつけなければならないなどの問題がある
     - そこでIaCのDRYが容易に行え、実行順序も調整してくれるラッパーであるTerragruntを使う
 
