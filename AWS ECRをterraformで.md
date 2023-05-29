@@ -1,12 +1,4 @@
 
-## You
-
-AWS ECRをterraformでどう定義するのか
-
-ECRの概要とよくある使用例とコードと解説を教えて
-
-## Genie
-
 AWS ECR（Elastic Container Registry）は、Dockerコンテナのイメージを保存、管理、デプロイするためのマネージドサービスです。ECRを使用することで、Dockerコンテナイメージを保存するために別個のサービスを使用する必要がなくなります。
 
 以下は、TerraformでAWS ECRを定義するための例です。 

@@ -1,9 +1,9 @@
 
 resource "aws_cloudfront_distribution" "cf_dist" {
   enabled    = true
-  web_acl_id = aws_wafv2_web_acl.waf.arn
+  web_acl_id = var.waf_arn
   origin {
-    domain_name = replace(aws_api_gateway_deployment.api_gw_deploy.invoke_url, "/^https?://([^/]*).*/", "$1")
+    domain_name = replace(var.rest_api_invoke_url, "/^https?://([^/]*).*/", "$1")
     origin_id   = "apigw_root"
 
     custom_origin_config {
@@ -67,7 +67,8 @@ resource "aws_cloudfront_distribution" "cf_dist" {
   }
 
   tags = {
-    Name = "api_gw_cloudfront"
+    Name = "${var.project_name}-${var.project_stage}-cloudfront"
+    ManagedBy = "Terraform"
   }
 
   price_class = "PriceClass_All" # すべての価格クラスのエッジロケーションを使用する
@@ -76,6 +77,6 @@ resource "aws_cloudfront_distribution" "cf_dist" {
   logging_config {
     bucket          = aws_s3_bucket.cloudfront_logging.bucket_domain_name
     include_cookies = false
-    prefix          = "cloudfront/"
+    prefix          = "${var.project_name}-cloudFront/${var.project_stage}/"
   }
 }
