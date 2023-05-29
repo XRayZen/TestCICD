@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     # cargo build --release --target x86_64-unknown-linux-musl
     # ARM用 ビルドするために必要なパッケージをインストールしビルド  
     apt update && \
-    app-get install -y gcc && \
+    apt-get install -y gcc && \
     apt-get install -y build-essential && \
     apt-get install -y gcc-multilib && \
     # musl-libcをインストール
