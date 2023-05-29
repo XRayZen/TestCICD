@@ -16,6 +16,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     # rustup target add x86_64-unknown-linux-musl && \
     # cargo build --release --target x86_64-unknown-linux-musl
     # ARM用
+    apt update && \
     apt install libwayland-cursor0 && \
     apt install libwayland-dev && \
     rustup target add aarch64-unknown-linux-musl && \
