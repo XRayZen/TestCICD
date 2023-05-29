@@ -13,7 +13,7 @@ terraform{
 
 dependency "ecr" {
     config_path = "../ecr"
-    musl-tools
+    
     mock_outputs = {
         ecr_repository_url = "123456789012.dkr.ecr.ap-northeast-1.amazonaws.com"
     }
