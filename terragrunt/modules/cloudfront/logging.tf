@@ -40,7 +40,7 @@ resource "aws_s3_bucket" "cloudfront_logging" {
 resource "aws_s3_bucket_public_access_block" "cloudfront_logging" {
   bucket                  = aws_s3_bucket.cloudfront_logging.bucket
   block_public_acls       = true
-  block_public_policy     = true
+  block_public_policy     = false
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
@@ -126,13 +126,6 @@ resource "aws_s3_bucket_policy" "log_bucket_policy" {
           }
         }
       },
-      {
-        Sid       = "PublicReadGetObject"
-        Effect    = "Allow"
-        Principal = { "*" = "*" }
-        Action    = "s3:GetObject"
-        Resource  = "${aws_s3_bucket.cloudfront_logging.arn}/*"
-      }
     ]
     }
   )
@@ -147,6 +140,7 @@ resource "aws_s3_bucket_ownership_controls" "log_bucket_ownership" {
 
 resource "aws_s3_bucket_acl" "log_bucket_acl" {
   bucket = aws_s3_bucket.cloudfront_logging.id
+  # クラウドフロントがログを書き込むための権限を付与
   acl    = "log-delivery-write"
 
   depends_on = [
