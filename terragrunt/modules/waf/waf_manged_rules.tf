@@ -11,11 +11,8 @@ resource "aws_wafv2_rule_group" "waf_managed_rule_group" {
   rule {
     name     = "aws_managed_rules_common_rule_set"
     priority = 2
-    # Webリクエストを上書きするかどうか
-    # マネージドルールを参照する時に必要
-    override_action {
-      # 上書きしない
-      none {}
+    action {
+      block {}
     }
     statement {
       # マネージドルールを参照する
@@ -35,11 +32,8 @@ resource "aws_wafv2_rule_group" "waf_managed_rule_group" {
   rule {
     name     = "aws_managed_rules_amazon_ip_reputation_list"
     priority = 3
-    # Webリクエストを上書きするかどうか
-    # マネージドルールを参照する時に必要
-    override_action {
-      # 上書きしない
-      none {}
+    action {
+      block {}
     }
     statement {
       # マネージドルールを参照する
@@ -59,11 +53,8 @@ resource "aws_wafv2_rule_group" "waf_managed_rule_group" {
   rule {
     name     = "aws_managed_rules_anonymous_ip_list"
     priority = 4
-    # Webリクエストを上書きするかどうか
-    # マネージドルールを参照する時に必要
-    override_action {
-      # 上書きしない
-      none {}
+    action {
+      block {}
     }
     statement {
       # マネージドルールを参照する
@@ -83,11 +74,8 @@ resource "aws_wafv2_rule_group" "waf_managed_rule_group" {
   rule {
     name     = "aws_managed_rules_known_bad_inputs_rule_set"
     priority = 5
-    # Webリクエストを上書きするかどうか
-    # マネージドルールを参照する時に必要
-    override_action {
-      # 上書きしない
-      none {}
+    action {
+      block {}
     }
     statement {
       # マネージドルールを参照する
