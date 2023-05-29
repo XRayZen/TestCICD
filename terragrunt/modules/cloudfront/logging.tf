@@ -40,7 +40,7 @@ resource "aws_s3_bucket" "cloudfront_logging" {
 resource "aws_s3_bucket_public_access_block" "cloudfront_logging" {
   bucket                  = aws_s3_bucket.cloudfront_logging.bucket
   block_public_acls       = true
-  block_public_policy     = false
+  block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
@@ -90,45 +90,7 @@ resource "aws_s3_bucket_request_payment_configuration" "log_bucket_request_payme
 # CloudFrontのアクセスログ格納用バケットポリシー
 resource "aws_s3_bucket_policy" "log_bucket_policy" {
   bucket = aws_s3_bucket.cloudfront_logging.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid       = "AllowCloudFrontToPutLogs"
-        Effect    = "Allow"
-        Principal = { "*" = "*" }
-        Action    = "s3:PutObject"
-        Resource  = "${aws_s3_bucket.cloudfront_logging.arn}/*"
-      },
-      {
-        Sid       = "AllowCloudFrontToGetLogs"
-        Effect    = "Allow"
-        Principal = { "*" = "*" }
-        Action    = "s3:GetObject"
-        Resource  = "${aws_s3_bucket.cloudfront_logging.arn}/*"
-      },
-      {
-        Sid       = "AllowCloudFrontToDescribeBucket"
-        Effect    = "Allow"
-        Principal = { "*" = "*" }
-        Action    = "s3:ListBucket"
-        Resource  = "${aws_s3_bucket.cloudfront_logging.arn}"
-      },
-      {
-        Sid       = "AddPerm"
-        Effect    = "Allow"
-        Principal = { Service = "cloudfront.amazonaws.com" }
-        Action    = "s3:PutObject"
-        Resource  = "${aws_s3_bucket.cloudfront_logging.arn}/*"
-        Condition = {
-          StringEquals = {
-            "s3:x-amz-acl" = "bucket-owner-full-control"
-          }
-        }
-      },
-    ]
-    }
-  )
+  policy = data.aws_iam_policy_document.cloudfront_logging_bucket.json
 }
 
 resource "aws_s3_bucket_ownership_controls" "log_bucket_ownership" {
