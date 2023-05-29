@@ -27,10 +27,6 @@ RUN rm -rf /usr/src/hello/target/release
 # 出来なかったらワーキングディレクトリすべて削除に変更する
 
 # 第二ステージ
-# Use the official Amazon Linux image as the base image
-# FROM amazonlinux:2
-# サンプルではpublic.ecr.aws/lambda/provided:al2をつかっている
-# 以下サンプルのコード 上手くいかなかったら置き換える
 FROM public.ecr.aws/lambda/provided:al2
 
 # Set the working directory

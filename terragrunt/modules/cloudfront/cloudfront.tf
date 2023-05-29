@@ -1,7 +1,7 @@
-
+# WebApi用のCloudFront
 resource "aws_cloudfront_distribution" "cf_dist" {
   enabled    = true
-  web_acl_id = var.waf_arn
+  web_acl_id = aws_wafv2_web_acl.waf.arn
   origin {
     domain_name = replace(var.rest_api_invoke_url, "/^https?://([^/]*).*/", "$1")
     origin_id   = "${var.origin_name}_root}"
@@ -13,20 +13,21 @@ resource "aws_cloudfront_distribution" "cf_dist" {
       origin_ssl_protocols   = ["TLSv1", "TLSv1.1"]
     }
   }
-  
+
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "${var.origin_name}_root}"
+    compress         = var.compress # 高速化のためコンテンツ圧縮(gzip)
 
     forwarded_values {
       query_string = false
 
       cookies {
-        forward = "all"
+        forward = "all" # 全てのCookieを転送する。
       }
     }
-    # 
+    # httpsにリダイレクトしてWebApiなのでキャッシュはしない
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
     default_ttl            = 0
@@ -39,6 +40,7 @@ resource "aws_cloudfront_distribution" "cf_dist" {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "${var.origin_name}_root}"
+    compress         = var.compress # 高速化のためコンテンツ圧縮(gzip)
 
     forwarded_values {
       query_string = false
@@ -67,7 +69,7 @@ resource "aws_cloudfront_distribution" "cf_dist" {
   }
 
   tags = {
-    Name = "${var.project_name}-${var.project_stage}-cloudfront"
+    Name      = "${var.project_name}-${var.project_stage}-cloudfront"
     ManagedBy = "Terraform"
   }
 
@@ -79,4 +81,9 @@ resource "aws_cloudfront_distribution" "cf_dist" {
     include_cookies = false
     prefix          = "${var.project_name}-cloudFront/${var.project_stage}/"
   }
+
+  retain_on_delete = false # TerraformでCloudFrontを削除したいため無効。
+
+  # ディストリビューションのステータスが「InProgress」→「Deployed」に変わることを待つかどうかの設定。
+  wait_for_deployment = true
 }

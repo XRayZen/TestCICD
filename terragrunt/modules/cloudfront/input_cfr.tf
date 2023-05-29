@@ -5,11 +5,6 @@ variable "rest_api_invoke_url" {
   description = "API GatewayのURL"
 }
 
-variable "waf_arn" {
-  type        = string
-  description = "WAFのARN"
-}
-
 # パラメータ
 
 variable "project_stage" {
@@ -34,7 +29,11 @@ variable "price_class" {
   default = "PriceClass_200"
 }
 
-
+variable "compress" {
+  type        = bool
+  description = "コンテンツ圧縮(gzip)を許可するかどうか"
+  default = false
+}
 
 
 

@@ -6,9 +6,9 @@ on:
             - main
 
 env:
-    AWS_REGION: us-east-1
-    AWS_Role_ARN: secrets.IAM_ROLE_ARN
-    REPO_ECR_NAME: test-cicd-repo
+  AWS_REGION: us-east-1
+  AWS_Role_ARN: secrets.IAM_ROLE_ARN
+  REPO_ECR_NAME: test-cicd-repo
 
 jobs:
     lambda_ci_cd:

@@ -56,6 +56,7 @@ resource "aws_cloudfront_distribution" "cf_dist" {
   }
 
   restrictions {
+    # https://docs.aws.amazon.com/ja_jp/AmazonCloudFront/latest/DeveloperGuide/georestrictions.html
     geo_restriction {
       restriction_type = "none"
     }

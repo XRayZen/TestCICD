@@ -26,6 +26,7 @@ dependency "method_world" {
         api_gw_resource_path = "mock_resource_path"
     }
 }
+# メソッドが増えるたびに追加する
 
 inputs ={
     api_gw_rest_api_id = dependency.rest.outputs.api_gw_rest_api_id
