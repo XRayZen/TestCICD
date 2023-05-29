@@ -97,21 +97,21 @@ resource "aws_s3_bucket_policy" "log_bucket_policy" {
         Effect    = "Allow"
         Principal = { "*" = "*" }
         Action    = "s3:PutObject"
-        Resource  = "arn:aws:s3:::cloudfront-access-log-${var.origin_name}/*"
+        Resource  = "${aws_s3_bucket.cloudfront_logging.arn}/*"
       },
       {
         Sid       = "AllowCloudFrontToGetLogs"
         Effect    = "Allow"
         Principal = { "*" = "*" }
         Action    = "s3:GetObject"
-        Resource  = "arn:aws:s3:::cloudfront-access-log-${var.origin_name}/*"
+        Resource  = "${aws_s3_bucket.cloudfront_logging.arn}/*"
       },
       {
         Sid       = "AllowCloudFrontToDescribeBucket"
         Effect    = "Allow"
         Principal = { "*" = "*" }
         Action    = "s3:ListBucket"
-        Resource  = "arn:aws:s3:::cloudfront-access-log-${var.origin_name}"
+        Resource  = "${aws_s3_bucket.cloudfront_logging.arn}"
       },
       {
         Sid       = "AddPerm"

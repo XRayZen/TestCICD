@@ -34,7 +34,7 @@ inputs = {
     waf_arn= dependency.waf.outputs.waf_arn
     project_stage = local.env.locals.env
     project_name = local.env.locals.project_name
-    origin_name = "api_gw"
+    origin_name = "api-gw"
     price_class = "PriceClass_200"
     compress= false
 }
