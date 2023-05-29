@@ -26,6 +26,12 @@ resource "aws_wafv2_web_acl" "waf" {
         arn = aws_wafv2_rule_group.waf_rule_group.arn
       }
     }
+    # Amazon CloudWatchのメトリクスとWebリクエストのサンプル収集を定義
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "waf_rg_custom_rule_set"
+      sampled_requests_enabled   = false
+    }
   }
   # マネージドルールグループを参照する
   # managed_rule_group_statementがACLにしか無いから見づらくなるが、ここに書く必要がある
@@ -116,8 +122,7 @@ resource "aws_wafv2_web_acl" "waf" {
   }
 
   depends_on = [
-    aws_wafv2_rule_group.waf_rule_group,
-    aws_wafv2_rule_group.waf_managed_rule_group
+    aws_wafv2_rule_group.waf_rule_group
   ]
 }
 
