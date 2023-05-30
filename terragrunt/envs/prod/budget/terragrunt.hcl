@@ -15,5 +15,5 @@ inputs = {
     limit_amount = 7
     time_unit = "MONTHLY"
     threshold = 20
-    notification_emails = ["megaon1fight0123456@gmail.com"]
+    notification_emails = [""]
 }
