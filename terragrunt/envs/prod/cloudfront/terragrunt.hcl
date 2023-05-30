@@ -10,8 +10,6 @@ terraform{
     source = "../../../modules/cloudfront"
 }
 
-# deployはrestとmethod二つのリソースに依存する
-
 dependency "apigw_deploy"{
     config_path = "../apigw_deploy"
 
