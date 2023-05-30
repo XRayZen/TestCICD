@@ -3,7 +3,7 @@ module "vpc" {
   version = "4.0.1"
 
   name = "${var.project_name}-vpc"
-  cidr = "10.0.0.0/16"
+  cidr = var.cidr
 
   azs             = var.availability_zones
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
@@ -18,5 +18,11 @@ module "vpc" {
 data "aws_subnet" "public" {
   count      = length(module.vpc.public_subnets)
   id         = element(module.vpc.public_subnets, count.index)
+  depends_on = [module.vpc]
+}
+
+data "aws_subnet" "private" {
+  count      = length(module.vpc.private_subnets)
+  id         = element(module.vpc.private_subnets, count.index)
   depends_on = [module.vpc]
 }

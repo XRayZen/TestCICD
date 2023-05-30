@@ -61,7 +61,13 @@ jobs:
       run: |
           terragrunt run-all plan
 
-    - name: Terragrunt apply
+    - name: Terragrunt destroy
       working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
       run: |
-          terragrunt run-all apply --terragrunt-non-interactive -auto-approve
+          terragrunt run-all destroy --terragrunt-non-interactive -auto-approve
+
+    # - name: Terragrunt apply
+    #   working-directory: ${{ env.TG_WORK_DIR }}/${{ env.TF_VAR_environment }}
+    #   run: |
+    #       terragrunt run-all apply --terragrunt-non-interactive -auto-approve
+
