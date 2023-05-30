@@ -30,7 +30,6 @@ data "aws_iam_policy_document" "cloudfront_logging_bucket" {
 ###############################################
 resource "aws_s3_bucket" "cloudfront_logging" {
   bucket = "cloudfront-access-log-${var.origin_name}"
-  # policy        = data.aws_iam_policy_document.cloudfront_logging_bucket.json
   force_destroy = false
 
 }

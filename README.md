@@ -1,17 +1,17 @@
 # RustでAWS Lambdaを使ったWebAPIバックエンドを構築して関数コードコンテナ・IaCで運用するCI/CDパイプラインを構築する（練習）
 - 組み合わせたAWSリソース
-    - CloudFront(CDN)->API Gateway->Lambda->DynamoDB
+    - WAF->CloudFront(CDN)->API Gateway->Lambda->DynamoDB
         - CloudFront->S3にアクセスログを保存
         - APIGWはクラウドウォッチにログを保存
 - CI/CDパイプラインにはGithub Actionsを使用する
 - クラウド構築にはIaCであるTerraform+Terragruntを使用する
     - 素のテラフォームだとステージごとにコードをコピペする必要があり（Not DRY・IaCコードの保守性が悪化）、実行順序にも気をつけなければならないなどの問題がある
     - そこでIaCのDRYが容易に行え、実行順序も調整してくれるラッパーであるTerragruntを使う
-- セキュリティ対策として、CloudFrontにWAFを設定する
+- セキュリティ対策として、CloudFrontの前段にWAFを設定する
   - 無料枠の対象外なのが痛いところ
+    - 設定するだけで課金されていくので注意する
   - 設定するだけでDDoS攻撃やSQLインジェクションなどの攻撃を防ぐことができる
   - また、CloudFrontにはIPアドレス制限機能があるので、特定のIPアドレスからのアクセスのみを許可することもできる
-  - 設定するだけで課金されていくので注意する
 
 ## CloudFrontとAPIGWを組み合わせるメリット
 CloudFrontとAPI Gatewayを組み合わせることには、次のようなメリットがあります。
