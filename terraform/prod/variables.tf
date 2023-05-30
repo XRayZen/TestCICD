@@ -41,7 +41,3 @@ variable "availability_zones" {
   default = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
 
-variable "notification_emails" {
-  type    = list(string)
-  default = ["megaon1fight0123456@gmail.com"]
-}
