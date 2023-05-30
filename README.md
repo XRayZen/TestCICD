@@ -1,4 +1,4 @@
-# RustでAWS Lambdaを使ったWebAPIバックエンドを構築して関数コードコンテナ・IaCで運用するCI/CDパイプラインを構築する（練習）
+# RustでAWS Lambdaを使ったWebAPIバックエンドを構築して関数コードコンテナ・IaCで運用するCI/CDパイプラインを構築する（DevOps練習）
 - 組み合わせたAWSリソース
     - WAF->CloudFront(CDN)->API Gateway->Lambda->DynamoDB
         - CloudFront->S3にアクセスログを保存
