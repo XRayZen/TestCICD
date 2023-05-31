@@ -4,6 +4,8 @@
     - WAF->CloudFront(CDN)->API Gateway->Lambda->DynamoDB
         - CloudFront->S3にアクセスログを保存
         - APIGWはクラウドウォッチにログを保存
+- Lambda関数のコードはRustで書いてDockerコンテナにしてAWS ECRにデプロイ
+    - Rustで書いたLambda関数のコードをDockerコンテナにしてデプロイすることで、開発環境の統一性、テストの容易性、デプロイの容易性、スケーラビリティの向上を実現する
 - CI/CDパイプラインにはGithub Actionsを使用する
 - クラウドインフラ構築にはIaCであるTerraform+Terragruntを使用する
     - 素のテラフォームだとステージごとにコードをコピペする必要があり（Not DRY・IaCコードの保守性が悪化）、実行順序にも気をつけなければならないなどの問題がある
