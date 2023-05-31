@@ -1,5 +1,5 @@
-# Rustで動くLambdaでサーバーレスなWebAPIをCICD構築して関数コードコンテナ・IaCで運用するCI/CDパイプラインを構築（DevOps練習）
-- バックエンド・WebAPIはサーバーレスアーキテクチャで構築
+# RustのLambdaコードをDockerコンテナでデプロイしたサーバーレスなWebAPIをIaCで構築・運用するCI/CDパイプラインを構築（DevOps練習）
+- バックエンド(WebAPI)をサーバーレスアーキテクチャで構築
 - 組み合わせたAWSリソース
     - WAF->CloudFront(CDN)->API Gateway->Lambda->DynamoDB
         - CloudFront->S3にアクセスログを保存
@@ -41,5 +41,3 @@ CloudFrontとAPI Gatewayを組み合わせることには、次のようなメ�
     runs-on: ubuntu-latest
 ```
 - 最初は変更が加えられたフォルダにしようとしたがそれ用の機能が削除されていたのか動かなかった
-
-
